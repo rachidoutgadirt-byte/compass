@@ -1,0 +1,2375 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوصلة التعليم الصريح</title>
+
+    <!-- PWA Manifest Link -->
+    <link rel="manifest" href="manifest.json">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-color: #20A4F3;
+            --sidebar-bg: #0D2B45;
+            --secondary-color: #0D2B45;
+            --accent-color: #FFFFFF;
+            --background-color-light: #f4f7fa;
+            --text-color-light: #34495e;
+            --background-color-dark: #1a1a2e;
+            --text-color-dark: #e1e8ed;
+            --sidebar-link-color: #e1e8ed;
+            --sidebar-link-active-bg: #20A4F3;
+            --card-background-light: #ffffff;
+            --card-background-dark: #1f2041;
+            --border-color-light: #e1e8ed;
+            --border-color-dark: #3a3b5a;
+            --shadow-color: rgba(13, 43, 69, 0.1);
+            --success-color: #2ecc71;
+            --success-bg-color: rgba(46, 204, 113, 0.1);
+            --incomplete-color: #3498db;
+            --incomplete-bg-color: rgba(52, 152, 219, 0.1);
+            --pending-color: #e67e22;
+            --pending-bg-color: rgba(230, 126, 34, 0.1);
+            --font-family: 'Tajawal', sans-serif;
+            /* Unit Colors */
+            --unit-color-1: #eaf7ff; --unit-color-2: #eafceb; --unit-color-3: #fff8e8; --unit-color-4: #f3eaff; --unit-color-5: #e8fbfb;
+            --unit-color-6: #ffebeb; --unit-color-7: #e6f7ff; --unit-color-8: #f0ebff; --unit-color-9: #fff2e6; --unit-color-10: #e6fff7;
+            --unit-text-color: #34495e;
+            /* Level Colors */
+            --level-1-color: #007bff; --level-2-color: #28a745; --level-3-color: #dc3545;
+        }
+
+        body.dark-mode {
+            --level-1-color: #58abf3; --level-2-color: #48c774; --level-3-color: #f14668;
+        }
+
+        .cell-class.level-color-1 { color: var(--level-1-color); }
+        .cell-class.level-color-2 { color: var(--level-2-color); }
+        .cell-class.level-color-3 { color: var(--level-3-color); }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--background-color-light);
+            color: var(--text-color-light);
+            transition: background-color 0.3s, color 0.3s;
+            overflow-x: hidden;
+        }
+
+        .dashboard-container { display: flex; min-height: 100vh; }
+        .sidebar { width: 260px; background-color: var(--sidebar-bg); color: var(--sidebar-link-color); position: fixed; top: 0; right: 0; height: 100%; z-index: 1040; transition: transform 0.3s ease-in-out; display: flex; flex-direction: column; box-shadow: -5px 0 15px rgba(0,0,0,0.1); }
+        .main-content { margin-right: 260px; width: calc(100% - 260px); padding: 1.5rem; transition: margin-right 0.3s ease-in-out; overflow-x: hidden; }
+        
+        .sidebar-header { padding: 1.5rem; text-align: center; border-bottom: 1px solid rgba(255, 255, 255, 0.1); position: relative; }
+        .sidebar-header img { width: 80px; height: 80px; margin-bottom: 0.5rem; border-radius: 50%; border: 3px solid var(--primary-color); }
+        .sidebar-header h5 { margin: 0; font-weight: 700; color: var(--accent-color); }
+
+        .sidebar-nav { flex-grow: 1; padding: 1rem; list-style: none; }
+        .sidebar-nav a { display: flex; align-items: center; gap: 15px; color: var(--sidebar-link-color); text-decoration: none; padding: 0.85rem 1rem; margin-bottom: 0.5rem; border-radius: 8px; transition: all 0.2s ease-in-out; border-right: 4px solid transparent; }
+        .sidebar-nav a:hover { background-color: rgba(255, 255, 255, 0.05); }
+        .sidebar-nav a.active { background-color: var(--sidebar-link-active-bg); color: white; font-weight: 700; border-right-color: var(--accent-color); }
+        .sidebar-nav svg, .sidebar-nav .fas { width: 22px; height: 22px; text-align: center; }
+
+        .sidebar-footer { padding: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.1); }
+        .sidebar-footer .form-check-label { color: var(--sidebar-link-color); }
+        .sidebar-footer .accordion-button { background-color: transparent; color: var(--sidebar-link-color); padding: 0.5rem 1rem; }
+        .sidebar-footer .accordion-button:not(.collapsed) { background-color: rgba(255,255,255,0.05); }
+        .sidebar-footer .accordion-body { padding: 0.5rem 0; }
+        .sidebar-footer .accordion-body .btn { width: 100%; text-align: right; margin-bottom: 5px; }
+
+
+        .menu-toggle { display: none; position: fixed; top: 15px; right: 15px; z-index: 1041; background: var(--card-background-light); border: 1px solid var(--border-color-light); border-radius: 50%; width: 45px; height: 45px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        
+        .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1039; }
+        
+        @media (max-width: 992px) {
+            .sidebar { transform: translateX(100%); }
+            .sidebar.show { transform: translateX(0); }
+            .sidebar.show + .sidebar-overlay { display: block; }
+            .main-content { margin-right: 0; width: 100%; }
+            .menu-toggle { display: flex; align-items: center; justify-content: center; }
+            .page-header { padding-right: 60px; }
+            .journal-table-container, .tech-card { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        }
+        
+        /* Dark Mode */
+        body.dark-mode { background-color: var(--background-color-dark); color: var(--text-color-dark); }
+        body.dark-mode .card, body.dark-mode .modal-content { background-color: var(--card-background-dark); border-color: var(--border-color-dark); color: var(--text-color-dark); }
+        body.dark-mode .table { --bs-table-bg: var(--card-background-dark); --bs-table-striped-bg: #2c3034; --bs-table-hover-bg: #32383e; border-color: var(--border-color-dark); color: var(--text-color-dark); }
+        body.dark-mode .form-control, body.dark-mode .form-select { background-color: #495057; color: var(--text-color-dark); border-color: #6c757d; }
+        body.dark-mode .info-message, body.dark-mode .alert-info { background-color: #2c3e50; color: var(--incomplete-color); border-color: var(--incomplete-color); }
+        body.dark-mode .page-header p, body.dark-mode .footer-text, body.dark-mode label, body.dark-mode .assignment-column .card-header { color: #adb5bd; }
+        body.dark-mode .menu-toggle { background: var(--card-background-dark); border-color: var(--border-color-dark); color: var(--text-color-dark); }
+        body.dark-mode .modal-header .btn-close { filter: invert(1) grayscale(100%) brightness(200%); }
+        body.dark-mode .nav-tabs .nav-link { color: var(--sidebar-link-color); border-bottom-color: var(--border-color-dark); }
+        body.dark-mode .nav-tabs .nav-link.active { background-color: var(--card-background-dark); border-color: var(--border-color-dark); }
+        body.dark-mode .sidebar-footer .accordion-button { color: var(--sidebar-link-color); }
+
+
+        .page { display: none; animation: fadeIn 0.5s; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        .page-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; }
+        .page-header h1 { color: var(--secondary-color); font-weight: 700; margin: 0; }
+        body.dark-mode .page-header h1 { color: var(--primary-color); }
+        
+        .card { border: 1px solid var(--border-color-light); border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 12px var(--shadow-color); margin-bottom: 1.5rem; }
+        
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .stat-card { text-align: center; }
+        .stat-card .value { font-size: 2.5rem; font-weight: 700; color: var(--primary-color); }
+        .stat-card .label { font-size: 1rem; color: #7f8c8d; }
+        
+        .instructions-content ul { list-style-type: none; padding-right: 0; }
+        .instructions-content > ul > li { margin-bottom: 1.5rem; border-right: 3px solid var(--primary-color); padding-right: 15px; }
+        .instructions-content strong { display: block; font-size: 1.2rem; color: var(--secondary-color); margin-bottom: 0.5rem; }
+        body.dark-mode .instructions-content strong { color: var(--primary-color); }
+        .instructions-content ul ul { padding-right: 20px; }
+        .instructions-content ul ul li { margin-bottom: 0.5rem; position: relative; }
+        .instructions-content ul ul li::before { content: "\f100"; font-family: "Font Awesome 5 Free"; font-weight: 900; position: absolute; right: -25px; color: var(--success-color); }
+        
+        .unit-block { margin-bottom: 2rem; }
+        .unit-title { background: linear-gradient(90deg, var(--sidebar-bg), var(--primary-color)); color: white; padding: 0.75rem 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; font-weight: 700; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        #content-display .session-grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+
+        @media (min-width: 1200px) {
+            #content-display .session-grid { grid-template-columns: repeat(4, 1fr); }
+        }
+        @media (max-width: 768px) {
+            #content-display .session-grid { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+        }
+        @media (max-width: 576px) {
+            #content-display .session-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        
+        #content-display .session-card-header, #upcoming-lessons-container .session-card-header { flex-wrap: nowrap; justify-content: space-between; align-items: center; gap: 1rem; }
+        #content-display .completion-date-container { display: inline-flex; flex-shrink: 0; align-items: center; white-space: nowrap; }
+
+        .class-selection-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 1rem; }
+        @media (max-width: 576px) { .class-selection-grid { grid-template-columns: repeat(2, 1fr); } }
+        
+        .footer-text { margin-top: 2rem; text-align: center; font-size: 0.9em; color: #7f8c8d; }
+        .control-group { display: flex; flex-wrap: wrap; gap: 15px; align-items: flex-end; margin-bottom: 1.5rem; }
+        .control-group > div { flex: 1 1 150px; }
+        select, input[type="date"] { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color-light); background-color: var(--card-background-light); font-size: 1em; }
+        .status-toggle { cursor: pointer; font-weight: bold; padding: 5px 10px; border-radius: 5px; user-select: none; transition: all 0.3s; text-align: center; }
+        .status-toggle.done { color: var(--success-color); background-color: var(--success-bg-color); }
+        .status-toggle.incomplete { color: var(--incomplete-color); background-color: var(--incomplete-bg-color); }
+        .status-toggle.pending { color: var(--pending-color); background-color: var(--pending-bg-color); }
+        .save-btn { background: var(--primary-color); color: var(--accent-color); border: none; font-weight: bold; padding: 12px 25px; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; }
+        
+        .toast-container { z-index: 1056; }
+        
+        #compass-class-info { font-weight: 500; color: var(--secondary-color); margin-bottom: 0.5rem; border-right: 3px solid var(--primary-color); padding-right: 10px; }
+        body.dark-mode #compass-class-info { color: var(--primary-color); }
+        
+        /* === TIMETABLE & NOTIFICATION STYLES === */
+        #notification-bell {
+            animation: bell-ring 2.5s ease-in-out infinite;
+            animation-play-state: running;
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+        }
+        #notification-bell.d-none { animation-play-state: paused; }
+        #notification-badge { 
+            font-size: 0.65em; 
+            padding: 0.3em 0.5em; 
+            transform: translate(-60%, 15%);
+        }
+        @keyframes bell-ring { 0%, 50%, 100% { transform: rotate(0); } 10%, 30% { transform: rotate(14deg); } 20%, 40% { transform: rotate(-14deg); } }
+        
+        #timetable-grid .timetable-slot { cursor: pointer; height: 60px; position: relative; }
+        #timetable-grid .timetable-slot:hover { background-color: rgba(0,0,0,0.05); }
+        #class-selector-container { background-color: var(--card-background-light); border: 1px solid var(--border-color-light); border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); z-index: 1060; }
+        
+        #upcoming-lessons-container .session-grid { grid-template-columns: 1fr; gap: 1rem; }
+        #upcoming-lessons-container .session-card-header h6 { flex-grow: 1; }
+        .lesson-time { font-size: 0.9em; font-weight: normal; color: #6c757d; white-space: nowrap; }
+        body.dark-mode .lesson-time { color: #adb5bd; }
+        /* === END STYLES === */
+        
+        /* === JOURNAL STYLES START === */
+        .journal-table-container { width: 100%; overflow-x: auto; }
+        #journal-table { border-collapse: separate; border-spacing: 0; width: 100%; table-layout: auto; }
+        #journal-table > thead > tr > th { font-weight: 700; padding: 1rem; background-color: var(--sidebar-bg); color: var(--accent-color); border-bottom: 2px solid var(--primary-color); text-align: center; vertical-align: middle; }
+        #journal-table tbody tr:not(:last-child) { border-bottom: 1px solid var(--border-color-light); }
+        
+        .journal-cell { padding: 1rem; vertical-align: middle; text-align: center; }
+
+        .cell-class { font-weight: 700; font-size: 1.1em; width: auto; }
+        .cell-date { width: auto; }
+        .cell-date-display span { display: block; line-height: 1.2; font-family: monospace, Tajawal, sans-serif; font-size: 1.1em; }
+        .cell-lesson-details { width: 100%; text-align: right; }
+        .lesson-main-info .lesson-title { font-size: 1.3em; font-weight: 700; color: var(--primary-color); margin-bottom: 0.5rem; text-align: center; }
+        .lesson-main-info .lesson-meta { display: none; }
+        .lesson-structure-container { border: 1px solid var(--border-color-light); border-radius: 8px; overflow: hidden; background: var(--card-background-light); }
+        .lesson-structure-table { width: 100%; border-collapse: collapse; table-layout: auto; }
+        .lesson-structure-table th:nth-child(1), .lesson-structure-table td:nth-child(1) { width: auto; white-space: nowrap; }
+        .lesson-structure-table th:nth-child(2), .lesson-structure-table td:nth-child(2) { width: 100%; }
+        .lesson-structure-table th:nth-child(3), .lesson-structure-table td:nth-child(3) { width: auto; white-space: nowrap; }
+        .lesson-structure-table th, .lesson-structure-table td { border: 1px solid var(--border-color-light); padding: 0.75rem; text-align: center; vertical-align: top; }
+        .lesson-structure-table thead th { background-color: #f8f9fa; font-weight: 500; font-size: 1em; }
+        .lesson-print-meta { font-weight: 500; font-size: 1em; color: var(--unit-text-color) !important; transition: background-color: 0.3s; }
+        .lesson-structure-table small { font-size: 0.8em; font-weight: normal; color: #6c757d; display: block; white-space: nowrap; }
+        .lesson-structure-table td { position: relative; padding-bottom: 35px; }
+        .lesson-structure-table td ol {
+            padding-right: 0;
+            margin: 0;
+            text-align: right;
+            list-style-type: none; 
+        }
+        .lesson-structure-table td ol li {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+        }
+        .cell-notes .note-content { white-space: pre-wrap; word-break: break-word; min-height: 25px; text-align: right; padding: 5px; background-color: rgba(0,0,0,0.02); border-radius: 5px; }
+        .edit-btn { background: none; border: none; cursor: pointer; font-size: 1.1em; color: var(--primary-color); }
+        .date-edit-btn { margin-right: 8px; }
+        .structure-edit-btn { position: absolute; bottom: 5px; left: 10px; }
+        
+        #journal-table .lesson-print-meta.unit-color-1 { background-color: var(--unit-color-1); } #journal-table .lesson-print-meta.unit-color-2 { background-color: var(--unit-color-2); }
+        #journal-table .lesson-print-meta.unit-color-3 { background-color: var(--unit-color-3); } #journal-table .lesson-print-meta.unit-color-4 { background-color: var(--unit-color-4); }
+        #journal-table .lesson-print-meta.unit-color-5 { background-color: var(--unit-color-5); } #journal-table .lesson-print-meta.unit-color-6 { background-color: var(--unit-color-6); }
+        #journal-table .lesson-print-meta.unit-color-7 { background-color: var(--unit-color-7); } #journal-table .lesson-print-meta.unit-color-8 { background-color: var(--unit-color-8); }
+        #journal-table .lesson-print-meta.unit-color-9 { background-color: var(--unit-color-9); } #journal-table .lesson-print-meta.unit-color-10 { background-color: var(--unit-color-10); }
+        
+        body.dark-mode { --unit-text-color: #e1e8ed; --unit-color-1: #1a2c3a; --unit-color-2: #1a3a1f; --unit-color-3: #3a321a; --unit-color-4: #2e1a3a; --unit-color-5: #1a3a3a; --unit-color-6: #3a1a1a; --unit-color-7: #1a2c3a; --unit-color-8: #2a1a3a; --unit-color-9: #3a2a1a; --unit-color-10: #1a3a2a;}
+        body.dark-mode #journal-table > thead > tr > th { background-color: var(--primary-color); }
+        body.dark-mode .lesson-main-info .lesson-title { color: var(--accent-color); }
+        body.dark-mode .lesson-structure-container { background: var(--card-background-dark); border-color: var(--border-color-dark); }
+        body.dark-mode .lesson-structure-table th, body.dark-mode .lesson-structure-table td { border-color: var(--border-color-dark); color: var(--text-color-dark); }
+        body.dark-mode .lesson-structure-table thead th { background-color: #495057; }
+        body.dark-mode .lesson-structure-table small { color: #adb5bd; }
+        body.dark-mode .cell-notes .note-content { background-color: rgba(255,255,255,0.05); }
+        body.dark-mode .edit-btn { color: var(--primary-color); }
+        body.dark-mode #journal-table .cell-class, body.dark-mode #journal-table .cell-date-display { color: var(--text-color-dark); }
+        /* === JOURNAL STYLES END === */
+        
+        /* === TECHNICAL CARD STYLES START === */
+        .tech-card { border: 2px solid; border-radius: 15px; margin-bottom: 2rem; font-size: 14px; }
+        .tech-card-header { display: grid; grid-template-columns: 1.2fr 2fr 1.2fr; padding: 0.5rem 1rem; border-bottom: 2px solid; font-weight: bold; text-align: right; }
+        .tech-card-header .header-col { padding: 0 10px; }
+        .tech-card-header .header-col:nth-child(2) { border-right: 1px solid; border-left: 1px solid; text-align: center;}
+        .tech-card-header h5 { font-size: 1.1em; font-weight: 700; margin: 0.5rem 0; }
+        .tech-card-header p { margin: 0.2rem 0; font-size: 0.9em; }
+        .tech-card-body { padding: 1rem; }
+        .tech-card .table { margin-bottom: 0; font-size: 0.95em; }
+        .tech-card .table th, .tech-card .table td { text-align: center; vertical-align: middle; padding: 0.5rem; }
+        .tech-card .table thead th { font-weight: 700; }
+        .tech-card-general-info th { width: 15%; background-color: rgba(0,0,0,0.03); }
+        .tech-card-details-table .stage-cell { font-weight: bold; background-color: rgba(0,0,0,0.03); writing-mode: vertical-rl; }
+        .tech-card-details-table .description-cell {
+            max-width: 140px;
+            word-wrap: break-word;
+            white-space: normal;
+            text-align: right !important;
+        }
+
+        /* Card Color Themes */
+        .tech-card.level-1.unit-1, .tech-card.level-2.unit-1, .tech-card.level-3.unit-1 { border-color: #007bff; } .tech-card.level-1.unit-1 .tech-card-header, .tech-card.level-2.unit-1 .tech-card-header, .tech-card.level-3.unit-1 .tech-card-header, .tech-card.unit-1 .stage-cell, .tech-card.unit-1 .tech-card-general-info th { background-color: #eaf7ff; border-color: #007bff; }
+        .tech-card.level-1.unit-2, .tech-card.level-2.unit-2, .tech-card.level-3.unit-2 { border-color: #1a8754; } .tech-card.level-1.unit-2 .tech-card-header, .tech-card.level-2.unit-2 .tech-card-header, .tech-card.level-3.unit-2 .tech-card-header, .tech-card.unit-2 .stage-cell, .tech-card.unit-2 .tech-card-general-info th { background-color: #eafceb; border-color: #1a8754; }
+        .tech-card.level-1.unit-3, .tech-card.level-2.unit-3, .tech-card.level-3.unit-3 { border-color: #ffc107; } .tech-card.level-1.unit-3 .tech-card-header, .tech-card.level-2.unit-3 .tech-card-header, .tech-card.level-3.unit-3 .tech-card-header, .tech-card.unit-3 .stage-cell, .tech-card.unit-3 .tech-card-general-info th { background-color: #fff8e8; border-color: #ffc107; }
+        .tech-card.level-1.unit-4, .tech-card.level-2.unit-4, .tech-card.level-3.unit-4 { border-color: #6f42c1; } .tech-card.level-1.unit-4 .tech-card-header, .tech-card.level-2.unit-4 .tech-card-header, .tech-card.level-3.unit-4 .tech-card-header, .tech-card.unit-4 .stage-cell, .tech-card.unit-4 .tech-card-general-info th { background-color: #f3eaff; border-color: #6f42c1; }
+        .tech-card.level-1.unit-5, .tech-card.level-2.unit-5, .tech-card.level-3.unit-5 { border-color: #fd7e14; } .tech-card.level-1.unit-5 .tech-card-header, .tech-card.level-2.unit-5 .tech-card-header, .tech-card.level-3.unit-5 .tech-card-header, .tech-card.unit-5 .stage-cell, .tech-card.unit-5 .tech-card-general-info th { background-color: #fff3e0; border-color: #fd7e14; }
+        .tech-card.level-1.unit-6, .tech-card.level-2.unit-6, .tech-card.level-3.unit-6 { border-color: #d63384; } .tech-card.level-1.unit-6 .tech-card-header, .tech-card.level-2.unit-6 .tech-card-header, .tech-card.level-3.unit-6 .tech-card-header, .tech-card.unit-6 .stage-cell, .tech-card.unit-6 .tech-card-general-info th { background-color: #fcecf4; border-color: #d63384; }
+        .tech-card.level-1.unit-7, .tech-card.level-2.unit-7, .tech-card.level-3.unit-7 { border-color: #0dcaf0; } .tech-card.level-1.unit-7 .tech-card-header, .tech-card.level-2.unit-7 .tech-card-header, .tech-card.level-3.unit-7 .tech-card-header, .tech-card.unit-7 .stage-cell, .tech-card.unit-7 .tech-card-general-info th { background-color: #e7f9fc; border-color: #0dcaf0; }
+        .tech-card.level-1.unit-8, .tech-card.level-2.unit-8, .tech-card.level-3.unit-8 { border-color: #6610f2; } .tech-card.level-1.unit-8 .tech-card-header, .tech-card.level-2.unit-8 .tech-card-header, .tech-card.level-3.unit-8 .tech-card-header, .tech-card.unit-8 .stage-cell, .tech-card.unit-8 .tech-card-general-info th { background-color: #f0ebff; border-color: #6610f2; }
+        .tech-card.level-1.unit-9, .tech-card.level-2.unit-9, .tech-card.level-3.unit-9 { border-color: #fd7e14; } .tech-card.level-1.unit-9 .tech-card-header, .tech-card.level-2.unit-9 .tech-card-header, .tech-card.level-3.unit-9 .tech-card-header, .tech-card.unit-9 .stage-cell, .tech-card.unit-9 .tech-card-general-info th { background-color: #fff3e0; border-color: #fd7e14; }
+        .tech-card.level-1.unit-10, .tech-card.level-2.unit-10, .tech-card.level-3.unit-10 { border-color: #20c997; } .tech-card.level-1.unit-10 .tech-card-header, .tech-card.level-2.unit-10 .tech-card-header, .tech-card.level-3.unit-10 .tech-card-header, .tech-card.unit-10 .stage-cell, .tech-card.unit-10 .tech-card-general-info th { background-color: #e9f9f4; border-color: #20c997; }
+
+        body.dark-mode .tech-card { color: var(--text-color-dark); }
+        body.dark-mode .tech-card .table th, body.dark-mode .tech-card .table td { border-color: var(--border-color-dark); }
+        body.dark-mode .tech-card-details-table td, body.dark-mode .tech-card-general-info td { color: var(--text-color-dark) !important; }
+        body.dark-mode .tech-card-general-info th, body.dark-mode .tech-card-details-table .stage-cell { background-color: rgba(255,255,255,0.05); }
+        body.dark-mode .tech-card.unit-1 .tech-card-header, body.dark-mode .tech-card.unit-1 .stage-cell, body.dark-mode .tech-card.unit-1 .tech-card-general-info th { background-color: var(--unit-color-1) !important; }
+        body.dark-mode .tech-card.unit-2 .tech-card-header, body.dark-mode .tech-card.unit-2 .stage-cell, body.dark-mode .tech-card.unit-2 .tech-card-general-info th { background-color: var(--unit-color-2) !important; }
+        body.dark-mode .tech-card.unit-3 .tech-card-header, body.dark-mode .tech-card.unit-3 .stage-cell, body.dark-mode .tech-card.unit-3 .tech-card-general-info th { background-color: var(--unit-color-3) !important; }
+        body.dark-mode .tech-card.unit-4 .tech-card-header, body.dark-mode .tech-card.unit-4 .stage-cell, body.dark-mode .tech-card.unit-4 .tech-card-general-info th { background-color: var(--unit-color-4) !important; }
+        body.dark-mode .tech-card.unit-5 .tech-card-header, body.dark-mode .tech-card.unit-5 .stage-cell, body.dark-mode .tech-card.unit-5 .tech-card-general-info th { background-color: var(--unit-color-5) !important; }
+        body.dark-mode .tech-card.unit-6 .tech-card-header, body.dark-mode .tech-card.unit-6 .stage-cell, body.dark-mode .tech-card.unit-6 .tech-card-general-info th { background-color: var(--unit-color-6) !important; }
+        body.dark-mode .tech-card.unit-7 .tech-card-header, body.dark-mode .tech-card.unit-7 .stage-cell, body.dark-mode .tech-card.unit-7 .tech-card-general-info th { background-color: var(--unit-color-7) !important; }
+        body.dark-mode .tech-card.unit-8 .tech-card-header, body.dark-mode .tech-card.unit-8 .stage-cell, body.dark-mode .tech-card.unit-8 .tech-card-general-info th { background-color: var(--unit-color-8) !important; }
+        body.dark-mode .tech-card.unit-9 .tech-card-header, body.dark-mode .tech-card.unit-9 .stage-cell, body.dark-mode .tech-card.unit-9 .tech-card-general-info th { background-color: var(--unit-color-9) !important; }
+        body.dark-mode .tech-card.unit-10 .tech-card-header, body.dark-mode .tech-card.unit-10 .stage-cell, body.dark-mode .tech-card.unit-10 .tech-card-general-info th { background-color: var(--unit-color-10) !important; }
+        /* === TECHNICAL CARD STYLES END === */
+
+        /* === MINDMAP STYLES START === */
+        #page-mindmap .header { text-align: center; margin-bottom: 20px; background: #fff; padding: 20px; border-radius: 15px; box-shadow: 0 2px 15px rgba(0,0,0,0.05); }
+        #page-mindmap .header h1 { margin-top: 0; color: #2c3e50; }
+        #page-mindmap .controls { margin-bottom: 15px; }
+        #page-mindmap .controls button { padding: 10px 25px; margin: 5px; border: none; border-radius: 25px; background-color: #ecf0f1; color: #2c3e50; cursor: pointer; font-family: inherit; font-weight: bold; transition: all 0.3s ease; }
+        #page-mindmap .controls button.active, #page-mindmap .controls button:hover { background-color: #3498db; color: #fff; box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3); }
+        #page-mindmap .instruction { color: #555; font-style: italic; font-size: 0.9em; margin: 15px 0 0 0; }
+        #page-mindmap .mindmap-key { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 20px; margin-top: 25px; padding-top: 15px; border-top: 1px solid #e0e0e0; }
+        #page-mindmap .key-item { display: flex; align-items: center; font-size: 0.9em; }
+        #page-mindmap .key-swatch { width: 18px; height: 18px; border-radius: 4px; margin-left: 8px; border: 1px solid rgba(0,0,0,0.1); }
+        #page-mindmap .mindmap-container { display: flex; justify-content: flex-start; align-items: center; overflow-x: auto; padding: 50px; min-height: 60vh; }
+        #page-mindmap ul { padding: 0; margin: 0; list-style-type: none; display: flex; flex-direction: column; justify-content: center; }
+        #page-mindmap li { display: flex; flex-direction: row; align-items: center; padding: 10px; position: relative; }
+        #page-mindmap li > ul { margin-right: 40px; position: relative; }
+        #page-mindmap li > ul::before { content: ''; position: absolute; right: -40px; top: 50%; width: 40px; height: 2px; background-color: #bdc3c7; }
+        #page-mindmap li.collapsed > ul::before { display: none; }
+        #page-mindmap li.has-siblings::before { content: ''; position: absolute; right: -20px; height: 100%; width: 2px; background-color: #bdc3c7; top: 0; }
+        #page-mindmap li:first-child::before { top: 50%; height: 50%; }
+        #page-mindmap li:last-child::before { height: 50%; bottom: 50%; }
+        #page-mindmap li:only-child::before { display: none; }
+        #page-mindmap li::after { content: ''; position: absolute; right: -20px; top: 50%; width: 20px; height: 2px; background-color: #bdc3c7; }
+        #page-mindmap .mindmap > li::before, #page-mindmap .mindmap > li::after { display: none; }
+        #page-mindmap .mindmap > li { padding: 0; }
+        #page-mindmap .node { padding: 10px 15px; border-radius: 8px; display: inline-block; font-size: 0.95em; transition: all 0.2s ease; cursor: default; position: relative; z-index: 2; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border: 2px solid transparent; max-width: 300px; white-space: normal; text-align: center; }
+        #page-mindmap .collapsible > .node { cursor: pointer; padding-left: 30px !important; }
+        #page-mindmap .collapsible > .node:hover { transform: scale(1.05); box-shadow: 0 5px 15px rgba(0,0,0,0.15); }
+        #page-mindmap .toggle-icon { position: absolute; left: 8px; top: 50%; transform: translateY(-50%); font-weight: bold; font-size: 1.2em; line-height: 1; }
+        #page-mindmap .collapsed > ul { display: none !important; }
+        #page-mindmap .level-1 > .node { background: #2c3e50; color: #fff; font-weight: bold; }
+        #page-mindmap .level-2 > .node { background: #e74c3c; color: #fff; font-size: 1.1em; }
+        #page-mindmap .level-3 > .node { background: #3498db; color: #fff; }
+        #page-mindmap .level-4 > .node { background: #9b59b6; color: #fff; font-size: 0.9em; }
+        #page-mindmap .level-5 > .node { background: #ffffff; color: #2c3e50; border-color: #dfe6e9; font-size: 0.85em; }
+        #page-mindmap .node .code { display: block; font-size: 0.75em; opacity: 0.8; margin-bottom: 4px; text-transform: uppercase; }
+        #page-mindmap .root-title-wrapper { display: flex; flex-direction: column; align-items: center; line-height: 1.4; }
+        #page-mindmap .root-title-wrapper .main-title { font-size: 1.3em; }
+        #page-mindmap .root-title-wrapper .year-subtitle { font-size: 0.7em; opacity: 0.85; margin-top: 4px; font-weight: normal; }
+        /* === MINDMAP STYLES END === */
+
+        .print-header, .print-signature-footer, .journal-print-header { display: none; }
+
+        @media print {
+            /* === START: PROFESSIONAL PRINT STYLESHEET (v35 - Final) === */
+            @page { size: A4 portrait; margin: 0.7cm 0.4cm; }
+            body { -webkit-print-color-adjust: exact !important; color-adjust: exact !important; font-size: 10pt; background: #fff !important; color: #000 !important; overflow: visible !important; }
+            .sidebar, .menu-toggle, .page:not(.active), .page-header:not(.print-header), #print-journal-btn, #print-cards-btn, .footer-text, .edit-btn, #journal-card > *:not(.printable-area), #page-cards .card, .lesson-structure-table thead tr:nth-child(2), .journal-print-header { display: none !important; }
+            body.printing-cards::before, body.printing-journal::before { content: ''; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 70%; height: 70%; background-image: url('https://i.ibb.co/0ps8mJYR/Explicit-teaching-logo5.webp'); background-size: contain; background-repeat: no-repeat; opacity: 0.08; z-index: -1; }
+            #journal-card, #page-cards { padding: 0 !important; border: none !important; box-shadow: none !important; }
+            .printable-area, #cards-display { display: block !important; border: none !important; box-shadow: none !important; padding: 0 !important; margin: 0 !important; width: 100% !important; overflow: visible !important; }
+            * { color: #000 !important; background-color: transparent !important; }
+            body.printing-journal .print-header { display: none !important; }
+            body.printing-journal #journal-table { width: 100% !important; min-width: 0 !important; border-collapse: collapse !important; table-layout: fixed !important; font-size: 9pt; }
+            body.printing-journal #journal-table > thead { display: table-header-group !important; }
+            body.printing-journal #journal-table tbody, body.printing-journal #journal-table tr { display: revert !important; }
+            body.printing-journal #journal-table th, body.printing-journal #journal-table td { display: table-cell !important; border: 1px solid #999 !important; padding: 4px !important; vertical-align: middle !important; text-align: right !important; word-wrap: break-word; }
+            body.printing-journal #journal-table .journal-cell.cell-class,
+            body.printing-journal #journal-table .journal-cell.cell-date { text-align: center !important; }
+
+            body.printing-journal #journal-table > * > tr > *:nth-child(1) { width: 10% !important; text-align: center !important; }
+            body.printing-journal #journal-table > * > tr > *:nth-child(2) { width: 68% !important; }
+            body.printing-journal #journal-table > * > tr > *:nth-child(3) { width: 10% !important; text-align: center !important; }
+            body.printing-journal #journal-table > * > tr > *:nth-child(4) { width: 12% !important; }
+            body.printing-journal #journal-table > thead > tr > th { background: linear-gradient(90deg, #0D2B45, #20A4F3) !important; color: white !important; font-weight: bold; text-align: center !important; vertical-align: middle; border: 1px solid #0D2B45 !important; }
+            body.printing-journal .lesson-main-info .lesson-title, body.printing-journal #journal-table .lesson-print-meta { text-align: center !important; vertical-align: middle !important; }
+            
+            body.printing-journal #journal-table .lesson-structure-table thead th {
+                 text-align: center !important;
+                 vertical-align: middle !important;
+            }
+            body.printing-journal #journal-table .lesson-structure-table thead th small {
+                 display: block;
+                 width: 100%;
+                 text-align: center !important;
+            }
+
+            body.printing-journal .journal-cell.cell-class.level-color-1 { color: #007bff !important; } body.printing-journal .journal-cell.cell-class.level-color-2 { color: #28a745 !important; } body.printing-journal .journal-cell.cell-class.level-color-3 { color: #dc3545 !important; }
+            body.printing-journal .lesson-structure-container { border: 1px solid #ccc !important; }
+            body.printing-journal #journal-table .lesson-print-meta { -webkit-print-color-adjust: exact !important; color-adjust: exact !important; }
+            body.printing-journal .lesson-structure-table th, body.printing-journal .lesson-structure-table td { border: 1px solid #ccc !important; }
+            body.printing-journal .lesson-structure-table td:nth-child(1) ol li,
+            body.printing-journal .lesson-structure-table td:nth-child(3) ol li {
+                white-space: nowrap !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+            }
+            body.printing-journal .lesson-structure-table td:nth-child(2) ol li {
+                white-space: normal !important; /* Ensures the middle column wraps as intended */
+            }
+            body.printing-journal .lesson-structure-table > * > tr > *:nth-child(1) { width: auto !important; white-space: nowrap !important; } 
+            body.printing-journal .lesson-structure-table > * > tr > *:nth-child(2) { width: 100% !important; white-space: normal !important; } 
+            body.printing-journal .lesson-structure-table > * > tr > *:nth-child(3) { width: auto !important; white-space: nowrap !important; }
+            body.printing-journal #journal-table .lesson-print-meta.unit-color-1 { background-color: #eaf7ff !important; } body.printing-journal #journal-table .lesson-print-meta.unit-color-2 { background-color: #eafceb !important; } body.printing-journal #journal-table .lesson-print-meta.unit-color-3 { background-color: #fff8e8 !important; } body.printing-journal #journal-table .lesson-print-meta.unit-color-4 { background-color: #f3eaff !important; } body.printing-journal #journal-table .lesson-print-meta.unit-color-5 { background-color: #fff3e0 !important; } body.printing-journal #journal-table .lesson-print-meta.unit-color-6 { background-color: #fcecf4 !important; } body.printing-journal #journal-table .lesson-print-meta.unit-color-7 { background-color: #e7f9fc !important; } body.printing-journal #journal-table .lesson-print-meta.unit-color-8 { background-color: #f0ebff !important; } body.printing-journal #journal-table .lesson-print-meta.unit-color-9 { background-color: #fff3e0 !important; } body.printing-journal #journal-table .lesson-print-meta.unit-color-10 { background-color: #e9f9f4 !important; }
+            .print-signature-footer { display: flex !important; justify-content: space-between; font-weight: bold; font-size: 0.9em; padding-top: 8px; border-top: 1px solid #ccc; }
+            tbody, tr.signature-row { page-break-inside: avoid !important; }
+            tr.signature-row { page-break-after: always !important; }
+            tr.signature-row:last-of-type { page-break-after: auto !important; }
+            body.printing-cards .print-header { display: block !important; text-align: center; margin-bottom: 1cm; }
+            body.printing-cards .print-header .print-logo { display: none !important; }
+            body.printing-cards .tech-card { page-break-inside: avoid !important; border-width: 1px !important; border-color: #999 !important; margin-bottom: 0 !important; font-size: 9.5pt; -webkit-print-color-adjust: exact !important; color-adjust: exact !important; }
+            body.printing-cards .tech-card-header { padding: 0.25rem 0.5rem !important; }
+            body.printing-cards .tech-card-body { padding: 0.5rem !important; }
+            body.printing-cards .tech-card .table { margin-bottom: 0.5rem !important; }
+            body.printing-cards .tech-card .table th, body.printing-cards .tech-card .table td { padding: 3px !important; font-size: 9pt; }
+            body.printing-cards .tech-card h5 { font-size: 1.1em; margin-top: 0.5rem; margin-bottom: 0.5rem; }
+            body.printing-cards .tech-card-header p { margin: 0.1rem 0; font-size: 0.85em; }
+            body.printing-cards .tech-card-header, body.printing-cards .tech-card .table th, body.printing-cards .tech-card .table td, body.printing-cards .tech-card-header .header-col:nth-child(2) { border-color: #999 !important; }
+            body.printing-cards .tech-card-general-info .text-start { text-align: right !important; }
+            body.printing-cards .tech-card.unit-1 .tech-card-header, body.printing-cards .tech-card.unit-1 .stage-cell, body.printing-cards .tech-card.unit-1 .tech-card-general-info th { background-color: #eaf7ff !important; } body.printing-cards .tech-card.unit-2 .tech-card-header, body.printing-cards .tech-card.unit-2 .stage-cell, body.printing-cards .tech-card.unit-2 .tech-card-general-info th { background-color: #eafceb !important; } body.printing-cards .tech-card.unit-3 .tech-card-header, body.printing-cards .tech-card.unit-3 .stage-cell, body.printing-cards .tech-card.unit-3 .tech-card-general-info th { background-color: #fff8e8 !important; } body.printing-cards .tech-card.unit-4 .tech-card-header, body.printing-cards .tech-card.unit-4 .stage-cell, body.printing-cards .tech-card.unit-4 .tech-card-general-info th { background-color: #f3eaff !important; } body.printing-cards .tech-card.unit-5 .tech-card-header, body.printing-cards .tech-card.unit-5 .stage-cell, body.printing-cards .tech-card.unit-5 .tech-card-general-info th { background-color: #fff3e0 !important; } body.printing-cards .tech-card.unit-6 .tech-card-header, body.printing-cards .tech-card.unit-6 .stage-cell, body.printing-cards .tech-card.unit-6 .tech-card-general-info th { background-color: #fcecf4 !important; } body.printing-cards .tech-card.unit-7 .tech-card-header, body.printing-cards .tech-card.unit-7 .stage-cell, body.printing-cards .tech-card.unit-7 .tech-card-general-info th { background-color: #e7f9fc !important; } body.printing-cards .tech-card.unit-8 .tech-card-header, body.printing-cards .tech-card.unit-8 .stage-cell, body.printing-cards .tech-card.unit-8 .tech-card-general-info th { background-color: #f0ebff !important; } body.printing-cards .tech-card.unit-9 .tech-card-header, body.printing-cards .tech-card.unit-9 .stage-cell, body.printing-cards .tech-card.unit-9 .tech-card-general-info th { background-color: #fff3e0 !important; } body.printing-cards .tech-card.unit-10 .tech-card-header, body.printing-cards .tech-card.unit-10 .stage-cell, body.printing-cards .tech-card.unit-10 .tech-card-general-info th { background-color: #e9f9f4 !important; }
+            /* === END: PROFESSIONAL PRINT STYLESHEET === */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-container">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <button id="notification-bell" class="btn btn-link text-white position-relative d-none" title="الحصص القادمة">
+                    <i class="fas fa-bell fa-lg"></i>
+                    <span id="notification-badge" class="position-absolute top-0 start-100 badge rounded-pill bg-danger border border-light"></span>
+                </button>
+                <img src="https://i.ibb.co/0ps8mJYR/Explicit-teaching-logo5.webp" alt="شعار التطبيق">
+                <h5 class="mb-0">بوصلة التعليم الصريح</h5>
+            </div>
+            <nav>
+                <ul class="sidebar-nav">
+                    <li><a href="#" class="nav-link" data-target="page-stats"><i class="fas fa-chart-pie"></i><span>إحصائيات</span></a></li>
+                    <li><a href="#" class="nav-link" data-target="page-compass"><i class="fas fa-compass"></i><span>البوصلة</span></a></li>
+                    <li><a href="#" class="nav-link" data-target="page-journal"><i class="fas fa-book-open"></i><span>دفتر النصوص</span></a></li>
+                    <li><a href="#" class="nav-link" data-target="page-cards"><i class="fas fa-clipboard-list"></i><span>البطاقة التقنية</span></a></li>
+                    <li><a href="#" class="nav-link" data-target="page-mindmap"><i class="fas fa-sitemap"></i><span>خريطة الكفايات</span></a></li>
+                    <li><a href="#" class="nav-link" data-target="page-instructions"><i class="fas fa-info-circle"></i><span>تعليمات الاستخدام</span></a></li>
+                    <li><a href="#" class="nav-link" data-target="page-settings"><i class="fas fa-cog"></i><span>الإعدادات</span></a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" role="switch" id="darkModeSwitch">
+                    <label class="form-check-label" for="darkModeSwitch">الوضع الليلي</label>
+                </div>
+                 <div class="accordion accordion-flush mt-2" id="backup-accordion">
+                  <div class="accordion-item bg-transparent">
+                    <h2 class="accordion-header" id="flush-headingOne">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne">
+                        <i class="fas fa-save me-2"></i> نسخة احتياطية
+                      </button>
+                    </h2>
+                    <div id="flush-collapseOne" class="accordion-collapse collapse" data-bs-parent="#backup-accordion">
+                      <div class="accordion-body">
+                          <button class="btn btn-sm btn-outline-light" id="export-data-btn"><i class="fas fa-download me-2"></i>تصدير البيانات</button>
+                          <button class="btn btn-sm btn-outline-light" id="import-data-btn"><i class="fas fa-upload me-2"></i>استيراد البيانات</button>
+                          <input type="file" id="import-file-input" class="d-none" accept=".json">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            </div>
+        </aside>
+        <div class="sidebar-overlay"></div>
+
+        <main class="main-content">
+            <button class="btn menu-toggle" id="menu-toggle"><i class="fas fa-bars"></i></button>
+            
+            <div class="print-header">
+                <img src="https://i.ibb.co/0ps8mJYR/Explicit-teaching-logo5.webp" alt="شعار التطبيق" class="print-logo">
+                <h2 id="print-title-header"></h2>
+                <span class="page-number"></span>
+            </div>
+
+            <section id="page-stats" class="page">
+                <div class="page-header"><h1>لوحة الإحصائيات</h1><p>هنا تجد نظرة شاملة وتفاعلية على تقدمك في إنجاز الدروس.</p></div>
+                <div id="stats-content"></div>
+            </section>
+            <section id="page-compass" class="page">
+                <div class="page-header">
+                    <div><h1>البوصلة</h1><p id="compass-subtitle">تصفح محتوى الدروس حسب القسم، المرحلة، الوحدة، وتتبع الإنجاز.</p></div>
+                    <div id="compass-header-links" class="d-none d-lg-flex flex-wrap gap-2">
+                        <a href="#" target="_blank" id="student-book-link" class="btn btn-outline-primary fw-bold"><i class="fas fa-book me-2"></i>كراسة التلميذ</a>
+                        <a href="#" target="_blank" id="ppt-lessons-link" class="btn btn-outline-danger fw-bold"><i class="fas fa-file-powerpoint me-2"></i>دروس PPT</a>
+                    </div>
+                </div>
+                <div id="compass-content"></div>
+            </section>
+            <section id="page-journal" class="page">
+                 <div class="page-header"><h1>دفتر النصوص</h1><p>سجل كامل للحصص المنجزة، مع إمكانية التعديل، إضافة ملاحظات، والطباعة.</p></div>
+                <div class="card" id="journal-card">
+                     <div class="printable-area">
+                        <div class="journal-print-header">
+                             <div class="header-right"><img src="https://i.ibb.co/0ps8mJYR/Explicit-teaching-logo5.webp" alt="شعار الوزارة"></div>
+                            <div class="header-center">دفتر النصوص</div>
+                            <div class="header-left">اللغة العربية</div>
+                        </div>
+                        <div class="journal-table-container">
+                            <table id="journal-table" class="table">
+                                <thead><tr><th>القسم</th><th>موضوع الدرس وعناصره</th><th>تاريخ الإنجاز</th><th>ملاحظات</th></tr></thead>
+                                <tbody id="journal-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div style="text-align: left; margin-top: 1.5rem;"><button id="print-journal-btn" class="btn save-btn">تحميل PDF</button></div>
+                </div>
+            </section>
+            <section id="page-cards" class="page">
+                 <div class="page-header"><h1>البطاقة التقنية</h1><p>استعراض وطباعة البطاقات التقنية المفصلة لكل حصة.</p></div>
+                 <div class="card">
+                    <div class="control-group">
+                        <div><label for="card-class-select">اختر القسم:</label><select id="card-class-select" class="form-select"></select></div>
+                        <div><label for="card-stage-select">اختر المرحلة:</label><select id="card-stage-select" class="form-select"></select></div>
+                        <div><label for="card-unit-select">اختر الوحدة:</label><select id="card-unit-select" class="form-select"></select></div>
+                        <div><label for="card-session-select">اختر الحصة:</label><select id="card-session-select" class="form-select"></select></div>
+                    </div>
+                     <div style="text-align: left; margin-top: 1.5rem;"><button id="print-cards-btn" class="btn save-btn">تحميل PDF</button></div>
+                </div>
+                <div id="cards-display" class="printable-area"></div>
+            </section>
+            <section id="page-mindmap" class="page">
+                 <header class="header card">
+                    <h1>خريطة الكفايات</h1>
+                    <div class="controls">
+                        <button id="btnMindmapYear1" class="active">الأولى إعدادي</button>
+                        <button id="btnMindmapYear2">الثانية إعدادي</button>
+                        <button id="btnMindmapYear3">الثالثة إعدادي</button>
+                    </div>
+                    <div class="mindmap-key">
+                        <div class="key-item"><span class="key-swatch" style="background-color: #e74c3c;"></span>المجالات</div>
+                        <div class="key-item"><span class="key-swatch" style="background-color: #3498db;"></span>الكفايات</div>
+                        <div class="key-item"><span class="key-swatch" style="background-color: #9b59b6;"></span>الأهداف</div>
+                        <div class="key-item"><span class="key-swatch" style="background-color: #ffffff; border-color: #ccc;"></span>المهام</div>
+                    </div>
+                    <p class="instruction">انقر على علامة (+) لفتح فروع الخريطة.</p>
+                </header>
+                <main id="mindmap-container-main" class="mindmap-container">
+                    <!-- Mindmap renders here -->
+                </main>
+            </section>
+            <section id="page-settings" class="page">
+                <div class="page-header">
+                    <h1>إعدادات الأستاذ 
+                        <button class="btn btn-link" id="teacher-info-btn" title="معلومات الأستاذ"><i class="fas fa-user-cog"></i></button>
+                        <button class="btn btn-link" id="timetable-btn" title="استعمال الزمن"><i class="fas fa-calendar-alt"></i></button>
+                    </h1>
+                    <p>الخطوة الأولى: حدد الأقسام التي تدرسها لكل مستوى دراسي.</p>
+                </div>
+                <div class="card" id="teacher-settings-container"></div>
+            </section>
+            <section id="page-instructions" class="page">
+                <div class="page-header"><h1>تعليمات الاستخدام</h1><p>دليل شامل لمساعدتك على الاستفادة من كل ميزات التطبيق.</p></div>
+                <div class="card instructions-content"></div>
+            </section>
+             <footer class="footer-text">
+                <p>© Copyright 2025 Riyapp - All rights reserved.</p>
+                <p>Designed with ❤️ by Rachid Outgadirt</p>
+            </footer>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div class="toast-container position-fixed bottom-0 start-50 translate-middle-x p-3"></div>
+    <div class="modal fade" id="note-modal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="modal-title">إضافة / تعديل</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea id="note-textarea" class="form-control" rows="8"></textarea></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button><button type="button" id="save-note-btn" class="btn btn-primary">حفظ</button></div></div></div></div>
+    <div class="modal fade" id="confirmationModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header border-0"><h5 class="modal-title">تم الحفظ بنجاح!</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p>تهانينا.. الآن صار بإمكانك الوصول إلى محتوى الأقسام المسندة إليك بسهولة.</p></div><div class="modal-footer border-0"><button type="button" id="confirm-save-ok-btn" class="btn btn-primary">حسناً</button></div></div></div></div>
+    <div class="modal fade" id="teacher-info-modal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">معلومات الأستاذ</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+        <form id="teacher-info-form">
+            <div class="mb-3"><label for="teacherName" class="form-label">اسم الأستاذ</label><input type="text" class="form-control" id="teacherName"></div>
+            <div class="mb-3"><label for="teacherAcademy" class="form-label">الأكاديمية الجهوية</label><input type="text" class="form-control" id="teacherAcademy"></div>
+            <div class="mb-3"><label for="teacherDirectorate" class="form-label">المديرية الإقليمية</label><input type="text" class="form-control" id="teacherDirectorate"></div>
+            <div class="mb-3"><label for="teacherSchool" class="form-label">اسم المؤسسة</label><input type="text" class="form-control" id="teacherSchool"></div>
+        </form>
+    </div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button><button type="button" id="save-teacher-info-btn" class="btn btn-primary">حفظ</button></div></div></div></div>
+
+    <!-- TIMETABLE MODAL -->
+    <div class="modal fade" id="timetable-modal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">تعبئة استعمال الزمن</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered text-center" id="timetable-grid">
+                            <!-- JS will generate timetable grid here -->
+                        </table>
+                    </div>
+                     <div id="class-selector-container" class="position-absolute d-none p-2"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+                    <button type="button" id="save-timetable-btn" class="btn btn-primary">حفظ وإغلاق</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- UPCOMING LESSONS MODAL -->
+    <div class="modal fade" id="upcoming-lessons-modal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="upcoming-lessons-title">الحصص المقبلة</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="upcoming-lessons-container">
+                    <!-- JS will inject upcoming lesson cards here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    const data = {
+        '1':{name:'الأولى إعدادي',stages:[{name:'المرحلة الأولى: الاهتمامات والهوايات',units:[{name:'اهتماماتي الثقافية',sessions:['فهم المسموع: الأديب الناشئ - ص: 6','الظاهرة اللغوية: الجملة الفعلية - ص: 8','التحدث: أعبر عن اهتماماتي الثقافية المفضلة - ص: 10','الطلاقة والفهم القرائي 1: كيف أَحْبَبْتُ القراءة؟ - ص: 11','الطلاقة والفهم (2): كيف أَحْبَبْتُ القراءة؟ - ص: 11','الإنتاج الكتابي 1: إنتاج نص سردي - ص: 14','الإنتاج الكتابي 2: إنتاج نص سردي - ص: 14','التقويم والدعم - ص: 16']},{name:'اهتماماتي الفنية',sessions:['فهم المسموع: موهبة تنتصر - ص: 19','الظاهرة اللغوية: الجملة الاسمية - ص: 21','التحدث: أعبر عن اهتماماتي الفنية المفضلة - ص: 23','الطلاقة والفهم 1: هكذا بدأت المسرح - ص: 24','الطلاقة والفهم (2): هكذا بدأت المسرح - ص: 24','الإنتاج الكتابي: إنتاج نص سردي (1) - ص: 27','الإنتاج الكتابي: إنتاج نص سردي (2) - ص: 27','التقويم والدعم - ص: 29']},{name:'الوقفة التقويمية الأولى',sessions:['تمرير التقويم الكتابي (الفرض المحروس)','تقويم التحدث','تقويم الاستماع / والطلاقة','التصحيح والدعم (تصحيح الفرض)','','','','']}]},{name:'المرحلة الثانية: البيئة والطبيعة',units:[{name:'التلوث البيئي',sessions:['فهم المسموع: حادثة لندن - ص: 36','الظاهرة اللغوية: المدح والذم - ص: 38','التحدث: أحذر من تلويث البيئة - ص: 40','الطلاقة والفهم 1: تلوث البيئة - ص: 41','الطلاقة والفهم (2): تلوث البيئة - ص: 41','الإنتاج الكتابي: إنتاج مقطع إخباري (1) - ص: 43','الإنتاج الكتابي: إنتاج مقطع إخباري (2) - ص: 43','التقويم والدعم - ص: 45']},{name:'التغير المناخي',sessions:['فهم المسموع: تداعيات الاحتباس الحراري - ص: 48','الظاهرة اللغوية: المفعول فيه - ص: 50','التحدث: استنكار سلوك غير مقبول - ص: 52','الطلاقة والفهم 1: مؤتمر كوب (22) - ص: 53','الطلاقة والفهم (2): مؤتمر كوب (22) - ص: 53','الإنتاج الكتابي: إنتاج مقطع حواري (1) - ص: 56','الإنتاج الكتابي: إنتاج مقطع إخباري (2) - ص: 56','التقويم والدعم - ص: 58']},{name:'الوقفة التقويمية الثانية',sessions:['تمرير التقويم الكتابي (الفرض المحروس)','تقويم التحدث','تقويم الاستماع / والطلاقة','التصحيح والدعم (تصحيح الفرض)','','','','']}]},{name:'المرحلة الثالثة: الصحة والرياضة',units:[{name:'حفظ الصحة',sessions:['فهم المسموع: الكولسترول والأطفال','الظاهرة اللغوية: المفعول المطلق','التحدث','الطلاقة والفهم 1: القيمة الغذائية للحليب: فوائد لا تحصى','الطلاقة والفهم (2): القيمة الغذائية للحليب: فوائد لا تُحصى','الإنتاج الكتابي (1): كتابة نص توجيهي عن ضرورة المحافظة على الصحة','الإنتاج الكتابي (2): كتابة نص توجيهي عن ضرورة المحافظة على الصحة','التقويم والدعم']},{name:'الرياضة',sessions:['فهم المسموع: رفقاً بقلبك','الظاهرة اللغوية: المفعول لأجله','التحدث','الطلاقة والفهم 1: الألعاب الأولمبية','الطلاقة والفهم (2): الألعاب الأولمبية','الإنتاج الكتابي (1): كتابة نص توجيهي عن أهمية ممارسة الرياضة','الإنتاج الكتابي (2): كتابة نص توجيهي عن أهمية ممارسة الرياضة','التقويم والدعم']},{name:'الوقفة التقويمية الثالثة',sessions:['تمرير التقويم الكتابي (الفرض المحروس)','تقويم التحدث','تقويم الاستماع / والطلاقة','التصحيح والدعم (تصحيح الفرض)','','','','']}]},{name:'المرحلة الرابعة: مفاخر بلادي',units:[{name:'مآثر بلادي',sessions:['فهم المسموع: القصبات','الظاهرة اللغوية: النعت','التحدث','الطلاقة والفهم 1: إنسان تافوغالت','الطلاقة والفهم (2): إنسان تافوغالت','الإنتاج الكتابي 1: كتابة نص وصفي عن معلمة تاريخية وطنية','الإنتاج الكتابي (2): كتابة نص وصفي عن معلمة تاريخية وطنية','التقويم والدعم']},{name:'أعلام بلادي',sessions:['فهم المسموع: رائدة من بلادي في علم الفيزياء','الظاهرة اللغوية: الحال','التحدث','الطلاقة والفهم 1: عباس الجراري','الطلاقة والفهم (2): عباس الجراري','الإنتاج الكتابي (1): كتابة نص وصفي عن علم من أعلام بلادي','الإنتاج الكتابي (2): كتابة نص وصفي عن علم من أعلام بلادي','التقويم والدعم']},{name:'الوقفة التقويمية الرابعة',sessions:['تمرير التقويم الكتابي (الفرض المحروس)','تقويم التحدث','تقويم الاستماع / والطلاقة','التصحيح والدعم (تصحيح الفرض)','','','','']}]},{name:'المرحلة الخامسة: العالم من حولنا',units:[{name:'أسفار ورحلات',sessions:['فهم المسموع: سحر بلاد المغرب','الظاهرة اللغوية: التمييز','التحدث','الطلاقة والفهم: عودة إلى الحضن','الطلاقة والفهم (2): عودة إلى الحضن','الإنتاج الكتابي (1): كتابة نص حكائي (السرد والوصف)','الإنتاج الكتابي (2): كتابة نص حكائي (السرد والوصف)','التقويم والدعم']},{name:'حضارة المتوسط',sessions:['فهم المسموع: في حضرة السليمانية','الظاهرة اللغوية: التوكيد','التحدث','الطلاقة والفهم 1: البحر الأبيض المتوسط مهد الحضارة','الطلاقة والفهم (2): البحر الأبيض المتوسط مهد الحضارة','الإنتاج الكتابي: كتابة نص حكائي (السرد والوصف)','الإنتاج الكتابي (2): كتابة نص حكائي (السرد والوصف)','التقويم والدعم']},{name:'الوقفة التقويمية الخامسة',sessions:['تمرير التقويم الكتابي (الفرض المحروس)','تقويم التحدث','تقويم الاستماع / والطلاقة','التصحيح والدعم (تصحيح الفرض)','','','','']}]}]},'2':{name:'الثانية إعدادي',stages:[{name:'المرحلة الأولى: التعلم والقيم',units:[{name:'حب التعلم',sessions:['الاستماع: كفاح في سبيل التعلم - ص: 6','الظاهرة اللغوية: الاستفهام - ص: 8','التحدث: أتحدث عن مسيرتي الدراسية - ص: 10','الطلاقة والفهم القرائي 1: أول قرار... أريد أن أتعلم - ص: 11','الطلاقة والفهم القرائي 2: أول قرار... أريد أن أتعلم - ص: 11','الإنتاج الكتابي 1: إنتاج نص سردي - ص: 14','الإنتاج الكتابي 2: إنتاج نص سردي - ص: 14','التقويم والدعم - ص: 16']},{name:'المعرفة والقيم',sessions:['الاستماع: إلى أبناء المدارس - ص: 19','الظاهرة اللغوية: التعجب - ص: 21','التحدث: أتحدث عن فضل المعارف - ص: 23','الطلاقة والفهم 1: أول من قرأ بأصابعه - ص: 24','الطلاقة والفهم 2: أول من قرأ بأصابعه - ص: 24','الإنتاج الكتابي: إنتاج نص سردي (1) - ص: 27','الإنتاج الكتابي: إنتاج نص سردي (2) - ص: 27','التقويم والدعم - ص: 29']},{name:'الوقفة التقويمية الأولى',sessions:['تمرير التقويم الكتابي (الفرض المحروس)','تقويم التحدث','تقويم الاستماع / والطلاقة','التصحيح والدعم (تصحيح الفرض)','','','','']}]},{name:'المرحلة الثانية: الرفقة والصداقة',units:[{name:'صديقي الإنسان',sessions:['الاستماع: نبض القلب - ص: 36','الظاهرة اللغوية: النداء - ص: 38','التحدث: أعبر عن رأيي حول الصداقة - ص: 40','الطلاقة والفهم 1: جدي صديقي - ص: 41','الطلاقة والفهم 2: جدي صديقي - ص: 41','الإنتاج الكتابي: إنتاج مقطع حواري (1) - ص: 44','الإنتاج الكتابي: إنتاج مقطع حواري (2) - ص: 44','التقويم والدعم - ص: 46']},{name:'صديقي الحيوان',sessions:['الاستماع: إسعاف عصفورة - ص: 49','الظاهرة اللغوية: التحذير و الإغراء - ص: 51','التحدث: التحسيس بأهمية حماية الحيوانات - ص: 53','الطلاقة والفهم 1: العجوز والعصفور - ص: 54','الطلاقة والفهم 2: العجوز والعصفور - ص: 54','الإنتاج الكتابي: إنتاج مقطع حواري (1) - ص: 57','الإنتاج الكتابي: إنتاج مقطع حواري (2) - ص: 57','التقويم والدعم - ص: 59']},{name:'الوقفة التقويمية الثانية',sessions:['تمرير التقويم الكتابي (الفرض المحروس)','تقويم التحدث','تقويم الاستماع / والطلاقة','التصحيح والدعم (تصحيح الفرض)','','','','']}]},{name:'المرحلة الثالثة: العبقرية المغربية',units:[{name:'لوحات إبداعية شعبية',sessions:['فهم المسموع: فن الملحون في التراث الشعبي المغربي','الظاهرة اللغوية: اسم الإشارة','التحدث','الطلاقة والفهم 1: فن التبوريدة... تراث مغربي أصيل','لطلاقة والفهم (2): فن التبوريدة... تراث مغربي أصيل','الإنتاج الكتابي (1): إنتاج نص وصفي','الإنتاج الكتابي (2): كتابة نص وصفي','التقويم والدعم']},{name:'أفكار مغربية خلاقة',sessions:['فهم المسموع: حق الملح','الظاهرة اللغوية: الاسم الموصول','التحدث','الطلاقة والفهم 1: مخازن الأمازيغ (إكودار)','لطلاقة والفهم (2): مخازن الأمازيغ (إكودار)','الإنتاج الكتابي (1): إنتاج نص وصفي حول مناسبة اجتماعية','الإنتاج الكتابي (2): إنتاج نص وصفي حول مناسبة اجتماعية','التقويم والدعم']},{name:'الوقفة التقويمية الثالثة',sessions:['تمرير التقويم الكتابي (الفرض المحروس)','تقويم التحدث','تقويم الاستماع / والطلاقة','التصحيح والدعم (تصحيح الفرض)','','','','']}]},{name:'المرحلة الرابعة: التعاون والمشاركة',units:[{name:'التعاون والتضامن',sessions:['فهم المسموع: فكر بغيرك','الظاهرة اللغوية: العطف','التحدث','الطلاقة والفهم 1: قوتنا في تعاوننا وتضامننا','لطلاقة والفهم (2): قوتنا في تعاوننا وتضامننا','الإنتاج الكتابي 1: كتابة نص تفسيري','الإنتاج الكتابي (2): كتابة نص تفسيري','التقويم والدعم']},{name:'العيش المشترك',sessions:['فهم المسموع: العيش المشترك في الإسلام','الظاهرة اللغوية: الإضافة','التحدث','الطلاقة والفهم 1: ما العيش المشترك؟','لطلاقة والفهم (2): ما العيش المشترك؟','الإنتاج الكتابي (1): إنتاج نص تفسيري','الإنتاج الكتابي (2): إنتاج نص تفسيري','التقويم والدعم']},{name:'الوقفة التقويمية الرابعة',sessions:['تمرير التقويم الكتابي (الفرض المحروس)','تقويم التحدث','تقويم الاستماع / والطلاقة','التصحيح والدعم (تصحيح الفرض)','','','','']}]},{name:'المرحلة الخامسة: مجتمع المعرفة',units:[{name:'المعرفة والمجتمع',sessions:['فهم المسموع: اقتصاد المعرفة','الظاهرة اللغوية: البدل','التحدث','الطلاقة والفهم: العدالة المعرفية','لطلاقة والفهم (2): العدالة المعرفية','الإنتاج الكتابي','الإنتاج الكتابي (2)','التقويم والدعم']},{name:'مستقبل المعرفة',sessions:['فهم المسموع: التحول الرقمي','الظاهرة اللغوية: أسلوب التفضيل','التحدث','الطلاقة والفهم 1: التعلم مدى الحياة ومجتمع المعرفة','الطلاقة والفهم (2): التعلم مدى الحياة ومجتمع المعرفة','الإنتاج الكتابي: إنتاج نص حجاجي','الإنتاج الكتابي (2): كتابة نص حجاجي','التقويم والدعم']},{name:'الوقفة التقويمية الخامسة',sessions:['تمرير التقويم الكتابي (الفرض المحروس)','تقويم التحدث','تقويم الاستماع / والطلاقة','التصحيح والدعم (تصحيح الفرض)','','','','']}]}]},'3':{name:'الثالثة إعدادي',stages:[{name:'المرحلة الأولى: الآداب والفنون',units:[{name:'قصتي مع الكتابة',sessions:['الاستماع: كيف أنقذتني الكتابة؟ - ص: 6','الظاهرة اللغوية: التشبيه - ص: 8','التحدث: أتحدث عن تجربة لي مع الكتابة الأدبية - ص: 10','الطلاقة والفهم القرائي 1: سحر الكتابة - ص: 11','الطلاقة والفهم القرائي 2: سحر الكتابة - ص: 11','الإنتاج الكتابي 1: إنتاج نص سردي - ص: 14','الإنتاج الكتابي 2: إنتاج نص سردي - ص: 14','التقويم والدعم - ص: 16']},{name:'قصتي مع السينما',sessions:['الاستماع: كيف عشقت السينما؟ - ص: 19','الظاهرة اللغوية: اسم الفاعل - ص: 21','التحدث: أعبر عن أفضل فيلم سينمائي شاهدته - ص: 23','الطلاقة والفهم 1: قصتي مع السينما - ص: 24','الطلاقة والفهم 2: قصتي مع السينما - ص: 24','الإنتاج الكتابي: إنتاج نص سردي (1) - ص: 27','الإنتاج الكتابي: إنتاج نص سردي (2) - ص: 27','التقويم والدعم - ص: 29']},{name:'الوقفة التقويمية الأولى',sessions:['تمرير التقويم الكتابي (الفرض المحروس)','تقويم التحدث','تقويم الاستماع / والطلاقة','التصحيح والدعم (تصحيح الفرض)','','','','']}]},{name:'المرحلة الثانية: العلوم والتكنولوجيا',units:[{name:'الاختراعات',sessions:['الاستماع: السيارة مغربية الصنع - ص: 36','الظاهرة اللغوية: اسم الآلة - ص: 38','التحدث: أعرف باختراع متميز - ص: 40','الطلاقة والفهم 1: المخترع المغربي الصغير - ص: 41','الطلاقة والفهم 2: المخترع المغربي الصغير - ص: 41','الإنتاج الكتابي: إنتاج تقرير إخباري (1) - ص: 44','الإنتاج الكتابي: إنتاج تقرير إخباري (2) - ص: 44','التقويم والدعم - ص: 46']},{name:'الذكاء الاصطناعي',sessions:['الاستماع: تطورات الذكاء الاصطناعي - ص: 49','الظاهرة اللغوية: الاقتراض - ص: 51','التحدث: أعرف بتطبيق من تطبيقات الذكاء الاصطناعي - ص: 53','الطلاقة والفهم 1: ما الذكاء الاصطناعي؟ - ص: 54','الطلاقة والفهم 2: ما الذكاء الاصطناعي؟ - ص: 54','الإنتاج الكتابي: إنتاج تقرير إخباري (1) - ص: 57','الإنتاج الكتابي: إنتاج تقرير إخباري (2) - ص: 57','التقويم والدعم - ص: 59']},{name:'الوقفة التقويمية الثانية',sessions:['تمرير التقويم الكتابي (الفرض المحروس)','تقويم التحدث','تقويم الاستماع / والطلاقة','التصحيح والدعم (تصحيح الفرض)','','','','']}]},{name:'المرحلة الثالثة: الإعلام والاتصال',units:[{name:'شبكات التواصل الاجتماعي',sessions:['الاستماع','الظاهرة اللغوية: الخبر','التحدث','الطلاقة والفهم 1: هل الشاشات ومواقع التواصل أضعفت تعاطفنا مع الحوادث؟','الطلاقة والفهم 2: هل الشاشات ومواقع التواصل أضعفت تعاطفنا مع الحوادث؟','الإنتاج الكتابي: إنتاج نص تفسيري (1)','الإنتاج الكتابي: إنتاج نص تفسيري (2)','التقويم والدعم']},{name:'صناعة التفاهة',sessions:['الاستماع','الظاهرة اللغوية: الاستثناء','التحدث','الطلاقة والفهم 1: سيول التفاهة','الطلاقة والفهم 2: سيول التفاهة','الإنتاج الكتابي: إنتاج نص تفسيري (1)','الإنتاج الكتابي: إنتاج نص تفسيري (2)','التقويم والدعم']},{name:'الوقفة التقويمية الثالثة',sessions:['تمرير التقويم الكتابي (الفرض المحروس)','تقويم التحدث','تقويم الاستماع / والطلاقة','التصحيح والدعم (تصحيح الفرض)','','','','']}]},{name:'المرحلة الرابعة: المال والأعمال',units:[{name:'المال والأعمال',sessions:['الاستماع','الظاهرة اللغوية: أسلوب الشرط','التحدث','الطلاقة والفهم 1: القوانين الخمسة للمال','الطلاقة والفهم 2: القوانين الخمسة للمال','الإنتاج الكتابي: إنتاج نص حجاجي 1','الإنتاج الكتابي: إنتاج نص حجاجي (2)','التقويم والدعم']},{name:'عالم المقاولة',sessions:['الاستماع','الظاهرة اللغوية: أسلوب التعليل','التحدث','الطلاقة والفهم 1: كيف تصبح رجل أعمال ناجحا','الطلاقة والفهم 2: كيف تصبح رجل أعمال ناجحا','الإنتاج الكتابي: إنتاج نص حجاجي (1)','الإنتاج الكتابي: إنتاج نص حجاجي (2)','التقويم والدعم']},{name:'الوقفة التقويمية الرابعة',sessions:['تمرير التقويم الكتابي (الفرض المحروس)','تقويم التحدث','تقويم الاستماع / والطلاقة','التصحيح والدعم (تصحيح الفرض)','','','','']}]},{name:'المرحلة الخامسة: المهن والحرف',units:[{name:'الحرف',sessions:['الاستماع: الحرف اليدوية المغربية... عودة إلى الماضي','الظاهرة اللغوية: الاضراب والاستدراك','التحدث','الطلاقة والفهم: نساء المغرب... حرفيات مبدعات','الطلاقة والفهم 2','الإنتاج الكتابي: إنتاج نص توجيهي 1','الإنتاج الكتابي: إنتاج نص توجيهي (2)','التقويم والدعم']},{name:'مهن المستقبل',sessions:['الاستماع','الظاهرة اللغوية: المقابلة','التحدث','الطلاقة والفهم 1: الآفاق المستقبلية لسوق العمل','الطلاقة والفهم 2: الآفاق المستقبلية لسوق العمل','الإنتاج الكتابي: إنتاج نص توجيهي','الإنتاج الكتابي: إنتاج نص توجيهي (2)','التقويم والدعم']},{name:'الوقفة التقويمية الخامسة',sessions:['تمرير التقويم الكتابي (الفرض المحروس)','تقويم التحدث','تقويم الاستماع / والطلاقة','التصحيح والدعم (تصحيح الفرض)','','','','']}]}]}};
+    
+    (function() {
+        
+        let lessonChart = null;
+        let noteModalInstance, confirmationModalInstance, teacherInfoModalInstance, timetableModalInstance, upcomingLessonsModalInstance;
+        const lessonStatuses = { pending: { text: 'غير منجزة', class: 'pending', next: 'incomplete' }, incomplete: { text: 'غير مكتملة', class: 'incomplete', next: 'done' }, done: { text: 'منجزة', class: 'done', next: 'pending' } };
+        
+        const timetableTimes = ['08:00 - 09:00', '09:00 - 10:00', '10:00 - 11:00', '11:00 - 12:00', '14:00 - 15:00', '15:00 - 16:00', '16:00 - 17:00', '17:00 - 18:00'];
+        const daysArabic = { 'monday': 'الاثنين', 'tuesday': 'الثلاثاء', 'wednesday': 'الأربعاء', 'thursday': 'الخميس', 'friday': 'الجمعة', 'saturday': 'السبت', 'sunday': 'الأحد' };
+        let tempTimetable = {};
+        let upcomingLessonsCache = null;
+
+        const externalLinks = {
+            '1': { book: 'https://drive.google.com/file/d/1UftBOC7pTQ9qSnOnwGegz1YRQhbKdFe4/view?usp=share_link', ppt: 'https://drive.google.com/drive/folders/16GYqhZpOtKG0FYc-yWzUVGu1dzbtQozo' },
+            '2': { book: 'https://drive.google.com/file/d/1q3exANob-nKJ4qP2OVOhgwVUctLOVKOE/view?usp=sharing', ppt: 'https://drive.google.com/drive/folders/1iFXGan2eQZoW2qThmUutlcK6_zYjqcRr' },
+            '3': { book: 'https://drive.google.com/file/d/1McqrWz7FVHcWl3kYkrxr-tH0QAwWlNvo/view?usp=sharing', ppt: 'https://drive.google.com/drive/folders/1L8HQgNF79Dbgd2ar77zb7RjTaE3uuMmD' }
+        };
+
+        const getDb = (key) => JSON.parse(localStorage.getItem(key) || '{}');
+        const setDb = (key, data) => localStorage.setItem(key, JSON.stringify(data));
+        
+        const showToast = (message, type = 'success') => {
+            const toastContainer = document.querySelector('.toast-container') || document.body.appendChild(Object.assign(document.createElement('div'), { className: 'toast-container position-fixed bottom-0 start-50 translate-middle-x p-3' }));
+            const toastId = 'toast' + Date.now();
+            const bgClass = type === 'success' ? 'text-bg-success' : 'text-bg-danger';
+            const toastHTML = `<div id="${toastId}" class="toast ${bgClass} border-0" role="alert" aria-live="assertive" aria-atomic="true"><div class="toast-header ${bgClass} border-0"><strong class="me-auto">تنبيه</strong><button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button></div><div class="toast-body">${message}</div></div>`;
+            toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+            const toastElement = document.getElementById(toastId);
+            const toast = new bootstrap.Toast(toastElement, { delay: 3000 });
+            toast.show();
+            toastElement.addEventListener('hidden.bs.toast', () => toastElement.remove());
+        };
+        const getTodayDate = () => new Date().toISOString().slice(0, 10);
+
+        // --- AIMS & ACTIVITIES HELPER FUNCTIONS ---
+        const getWritingTextType = (lessonInfo) => {
+            const { unit } = lessonInfo;
+            const writingSession = unit.sessions.find(s => s.includes('الإنتاج الكتابي'));
+            if (!writingSession) return '';
+            const textTypeMatch = writingSession.match(/(سردي|وصفي|حجاجي|إخباري|حواري|توجيهي|تفسيري|تقرير إخباري)/);
+            return textTypeMatch ? `ال${textTypeMatch[0]}` : '';
+        }
+        
+        const getLessonType = (sessionTitle) => {
+            if (sessionTitle.includes('تقويم التحدث')) return 'eval_speaking';
+            if (sessionTitle.includes('تقويم الاستماع')) return 'eval_listening';
+            if (sessionTitle.includes('الفرض المحروس')) return 'eval_written_test';
+            if (sessionTitle.includes('التصحيح والدعم')) return 'eval_correction';
+            if (sessionTitle.includes('فهم المسموع') || sessionTitle.includes('الاستماع')) return 'listening';
+            if (sessionTitle.includes('الظاهرة اللغوية')) return 'grammar';
+            if (sessionTitle.includes('التحدث')) return 'speaking';
+            if (sessionTitle.includes('الطلاقة والفهم') && !sessionTitle.includes('(2)')) return 'reading1';
+            if (sessionTitle.includes('الطلاقة والفهم (2)')) return 'reading2';
+            if (sessionTitle.includes('الإنتاج الكتابي') && !/(\(2\)| 2:)/.test(sessionTitle)) return 'writing1';
+            if (sessionTitle.includes('الإنتاج الكتابي') && /(\(2\)| 2:)/.test(sessionTitle)) return 'writing2';
+            if (sessionTitle.includes('التقويم والدعم')) return 'support';
+            return 'default';
+        };
+
+        // --- LESSON PLAN TEMPLATES ---
+        const lessonPlanTemplates = {
+            listening: {
+                aims: (unitName) => [`- اكتساب معجم مرتبط بمجال "${unitName}" وتوظيفه في التحدث والكتابة.`, '- الاستماع الفعال - الفهم المباشر والاستنتاجي للنص المسموع.'],
+                activities: (lessonInfo) => [
+                    'إغناء المعجم: [شبكة الكلمات...]',
+                    `الاستماع والفهم: [عناصر الوضعية التواصلية + أسئلة الفهم الصريح + بنية النص ${getWritingTextType(lessonInfo) || ''} + أسئلة الفهم الاستنتاجي (مؤشرات دالة)]`,
+                    'الاستثمار: [إتمام الملخص بما يناسب]'
+                ],
+                briefActivities: () => ['إغناء المعجم: [شبكة الكلمات...]', 'الاستماع والفهم: [عناصر الوضعية التواصلية + أسئلة الفهم...]', 'الاستثمار: [إتمام الملخص بما يناسب]']
+            },
+            grammar: {
+                aims: (grammarTopic) => [`- تَعرُّف "${grammarTopic}" ووظيفته (ها) التعبيرية.`, `- توظيف "${grammarTopic}" في التحدث والكتابة.`],
+                activities: (grammarTopic) => [
+                    `تعرف الظاهرة اللغوية واستخراج عناصرها`,
+                    `التعبير بجمل تتضمن "${grammarTopic}".`,
+                    `توظيف "${grammarTopic}" للتعبير عن وضعية تواصلية.`
+                ],
+                briefActivities: (grammarTopic) => [`تعرف الظاهرة اللغوية "${grammarTopic}" واستخراج عناصرها`, `التعبير بجمل تتضمن "${grammarTopic}"`, `توظيف "${grammarTopic}" للتعبير عن وضعية تواصلية`]
+            },
+            speaking: {
+                aims: (unitName) => [`- التحدث باسترسال عن "${unitName}".`, `- توظيف المفردات وأفعال الكلام المرتبطة بمجال "${unitName}".`],
+                activities: (unitName) => [
+                    `اكتساب أفعال الكلام للتعبير عن "${unitName}".`,
+                    `تطبيق الموارد المكتسبة في النشاط الأول.`,
+                    `إنتاج نص شفهيا للإجابة عن وضعية تواصلية وفق تصميم محدد.`
+                ],
+                briefActivities: (unitName) => [`اكتساب أفعال الكلام للتعبير عن "${unitName}"`, `تطبيق الموارد المكتسبة في النشاط الأول`, `إنتاج نص شفهيا للإجابة عن وضعية تواصلية...`]
+            },
+            reading1: {
+                aims: (lessonTitle, unitName) => [`- قراءة نص "${lessonTitle}" بطلاقة.`, `- اكتساب معجم مرتبط بمجال "${unitName}" وتوظيفه في التحدث والكتابة.`, '- استخراج معلومات صريحة من النص.'],
+                activities: () => [
+                    'قراءة النص قراءة صامتة',
+                    'التمرن على قراءة "كلمات، عبارات، فقرة" بطلاقة.',
+                    'الفهم المباشر: [بطاقة التعريف بالكاتب + الوضعية التواصلية + استخراج عناصر محددة + ترتيب الأحداث أو الأفكار حسب ورودها في النص]'
+                ],
+                briefActivities: () => ['قراءة النص قراءة صامتة', 'التمرن على قراءة "كلمات، عبارات، فقرة" بطلاقة', 'الفهم المباشر: [بطاقة التعريف بالكاتب + الوضعية التواصلية...]']
+            },
+            reading2: {
+                aims: (lessonTitle) => [`- قراءة نص "${lessonTitle}" بطلاقة.`, '- استخراج معلومات ضمنية من النص.'],
+                activities: () => [
+                    'الفهم الاستنتاجي: [أسئلة تستهدف استخراج معلومات ضمنية من النص]',
+                    'الحصيلة: [تلخيص النص + تحديد ما استفدته من النص]'
+                ],
+                briefActivities: () => ['الفهم الاستنتاجي: [أسئلة تستهدف استخراج معلومات ضمنية...]', 'الحصيلة: [تلخيص النص + تحديد ما استفدته من النص]']
+            },
+            writing1: {
+                aims: (textType, unitName, writingTopic) => [`- تعرف بنية النص ${textType}.`, `- "${writingTopic}" مرتبط بمجال "${unitName}".`],
+                activities: (textType) => [
+                    `قراءة النص واستخراج بنية النص ${textType}.`,
+                    'قراءة النص مرة ثانية واستخراج موارد الكتابة.',
+                    `قراءة النص مرة ثالثة واستخراج خطاطة النص ${textType}.`
+                ],
+                briefActivities: (textType) => [`قراءة النص واستخراج بنية النص ${textType}`, 'قراءة النص مرة ثانية واستخراج موارد الكتابة', `قراءة النص مرة ثالثة واستخراج خطاطة النص ${textType}`]
+            },
+            writing2: {
+                aims: (writingTopic, unitName) => [`- "${writingTopic}" مرتبط بمجال "${unitName}".`],
+                activities: (textType) => [
+                    `قراءة الوضعية التواصلية واستخراج عناصر النص ${textType}.`,
+                    'تحديد مراحل النص المراد كتابته، والتعابير المناسبة لكل مرحلة.',
+                    'إنجاز المطلوب وفق معايير النجاح'
+                ],
+                briefActivities: () => ['قراءة الوضعية التواصلية واستخراج عناصر النص...', 'تحديد مراحل النص المراد كتابته، والتعابير المناسبة...', 'إنجاز المطلوب وفق معايير النجاح']
+            },
+            support: {
+                aims: () => ['- تصفية الصعوبات ومعالجة التعثرات.'],
+                activities: () => ['قراءة النص بطلاقة', 'دعم المكتسبات في الفهم', 'دعم المكتسبات اللغوية'],
+                briefActivities: () => ['قراءة النص بطلاقة', 'دعم المكتسبات في الفهم', 'دعم المكتسبات اللغوية']
+            },
+            eval_written_test: {
+                aims: (stageName) => [`- تقويم المكتسبات المعرفية والمهارية المرتبطة بمجال "${stageName}".`],
+                activities: () => ['عرض التعليمات وتوضيح المطلوب', 'إنجاز الفرض', 'مراجعة الأوراق وتسليمها.'],
+                briefActivities: () => ['عرض التعليمات وتوضيح المطلوب', 'إنجاز الفرض', 'مراجعة الأوراق وتسليمها.']
+            },
+            eval_speaking: {
+                aims: (stageName) => [`- تقويم القدرة على التعبير شفهيا بلغة سليمة وتوظيف أفعال الكلام المرتبطة بمجال "${stageName}".`],
+                activities: () => ['قراءة الوضعية التواصلية وتوضيح المطلوب.', 'إنجاز الوضعية التواصلية شفهيا باستثمار المكتسبات والموارد.', 'تقويم الإنجازات.'],
+                briefActivities: () => ['قراءة الوضعية التواصلية وتوضيح المطلوب.', 'إنجاز الوضعية التواصلية شفهيا باستثمار المكتسبات والموارد.', 'تقويم الإنجازات.']
+            },
+            eval_listening: {
+                aims: () => ['- تقويم القدرة على الاستماع الفعال واستخراج معان مباشرة وضمنية.'],
+                activities: () => ['التسميع الأول وتحديد عناصر الوضعية التواصلية.', 'التسميع 2 ثم 3 للإجابة عن أسئلة الفهم المباشر والفهم الاستنتاجي.', 'تقويم قراءة النص الاستماعي بطلاقة.'],
+                briefActivities: () => ['التسميع الأول وتحديد عناصر الوضعية التواصلية.', 'التسميع 2 ثم 3 للإجابة عن أسئلة الفهم...', 'تقويم قراءة النص الاستماعي بطلاقة.']
+            },
+            eval_correction: {
+                aims: () => ['- تقويم درجة التحكم في الكفايات المرتبطة بالوحدة.'],
+                activities: () => ['نقل الأسئلة الى الدفاتر وتوزيع الأوراق.', 'التصحيح الجماعي على السبورة والفردي على الدفتر والورقة.', 'التقويم الذاتي من خلال تعبئة دفتر التعلمات والكفايات.'],
+                briefActivities: () => ['نقل الأسئلة الى الدفاتر وتوزيع الأوراق', 'التصحيح الجماعي على السبورة والفردي...', 'التقويم الذاتي من خلال تعبئة دفتر التعلمات...']
+            }
+        };
+
+        const activityDetails = {
+            listening: {
+                0: { time: '3 دقائق', aids: 'السبورة + الكراسة + ppt' },
+                1: { time: '32 دقيقة', aids: 'Audio + الكراسة + ppt' },
+                2: { time: '5 دقائق', aids: 'الكراسة + ppt' }
+            },
+            grammar: {
+                0: { time: '10 دقائق', aids: 'السبورة + الكراسة + ppt' },
+                1: { time: '10 دقائق', aids: 'السبورة + الكراسة + ppt' },
+                2: { time: '20 دقيقة', aids: 'السبورة + الكراسة + ppt' }
+            },
+            speaking: {
+                0: { time: '10 دقائق', aids: 'الكراسة + ppt' },
+                1: { time: '10 دقائق', aids: 'الكراسة + ppt' },
+                2: { time: '20 دقيقة', aids: 'السبورة + الكراسة + ppt' }
+            },
+            reading1: {
+                0: { time: '5 دقائق', aids: 'الكراسة' },
+                1: { time: '15 دقيقة', aids: 'الكراسة + ppt' },
+                2: { time: '20 دقيقة', aids: 'السبورة + الكراسة + ppt' }
+            },
+            reading2: {
+                0: { time: '15 دقيقة', aids: 'الكراسة' },
+                1: { time: '15 دقيقة', aids: 'الكراسة + ppt' },
+                2: { time: '10 دقائق', aids: 'السبورة + الكراسة + ppt' }
+            },
+            writing1: {
+                0: { time: '15 دقيقة', aids: 'الكراسة + ppt' },
+                1: { time: '10 دقائق', aids: 'الكراسة + ppt' },
+                2: { time: '15 دقيقة', aids: 'السبورة + الكراسة + ppt' }
+            },
+            writing2: {
+                0: { time: '10 دقائق', aids: 'الكراسة + ppt' },
+                1: { time: '10 دقائق', aids: 'الكراسة + ppt' },
+                2: { time: '20 دقيقة', aids: 'الدفتر + الكراسة + ppt' }
+            },
+            support: {
+                0: { time: '10 دقائق', aids: 'الكراسة + ppt' },
+                1: { time: '15 دقيقة', aids: 'السبورة + الكراسة + ppt' },
+                2: { time: '15 دقيقة', aids: 'السبورة + الكراسة + ppt' }
+            },
+            eval_written_test: {
+                0: { time: '5 دقائق', aids: 'أوراق الفرض + السبورة' },
+                1: { time: '30 دقيقة', aids: 'أوراق الفرض' },
+                2: { time: '5 دقائق', aids: 'أوراق الفرض' }
+            },
+            eval_speaking: {
+                0: { time: '5 دقائق', aids: 'السبورة + الكراسة + ppt' },
+                1: { time: '30 دقيقة', aids: '...' },
+                2: { time: '5 دقائق', aids: '...' }
+            },
+            eval_listening: {
+                0: { time: '5 دقائق', aids: 'أوراق الامتحان + Audio' },
+                1: { time: '15 دقيقة', aids: 'أوراق الامتحان + Audio' },
+                2: { time: '20 دقيقة', aids: 'النص القرائي (الاستماعي)' }
+            },
+            eval_correction: {
+                0: { time: '15 دقيقة', aids: 'أوراق الفرض + الدفاتر + ppt' },
+                1: { time: '10 دقائق', aids: 'أوراق الفرض + السبورة + الدفاتر' },
+                2: { time: '10 دقائق', aids: 'دفتر التعلمات والكفايات' }
+            }
+        };
+        
+        const switchPage = (targetId) => {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.getElementById(targetId)?.classList.add('active');
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.toggle('active', link.dataset.target === targetId));
+            localStorage.setItem('activePage', targetId);
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar.classList.contains('show')) sidebar.classList.remove('show');
+            if (targetId === 'page-stats') renderStatisticsPage();
+            if (targetId === 'page-journal') renderJournal();
+            if (targetId === 'page-compass') checkCompassPrerequisites();
+            if (targetId === 'page-settings') renderSettingsPage();
+            if (targetId === 'page-cards') renderCardsPage();
+        };
+
+        const renderStatisticsPage = () => {
+            const statsContent = document.getElementById('stats-content');
+            const settings = getDb('teacherSettings');
+            if (Object.keys(settings).length === 0) {
+                statsContent.innerHTML = `<div class="alert alert-info">يرجى الانتقال إلى صفحة "الإعدادات" أولاً لتحديد الأقسام التي تدرسها.</div>`;
+                return;
+            }
+            const overallStats = getStatsData();
+            let classDetailsHTML = '';
+            let classOptionsHTML = '<option value="all">كل الأقسام</option>';
+            Object.entries(settings).forEach(([classId, classInfo]) => {
+                const classStats = getStatsData(classId);
+                const total = classStats.done + classStats.incomplete + classStats.pending;
+                const donePercent = total > 0 ? (classStats.done / total) * 100 : 0;
+                const incompletePercent = total > 0 ? (classStats.incomplete / total) * 100 : 0;
+                const pendingPercent = 100 - donePercent - incompletePercent;
+
+                classDetailsHTML += `
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h4>${classInfo.className}</h4>
+                                <p class="mb-2"><strong>المستوى:</strong> ${data[classInfo.levelId]?.name}</p>
+                                <div class="progress mt-3" style="height: 20px; font-size: 0.75rem; font-weight: bold; color: white;">
+                                    <div class="progress-bar" role="progressbar" style="width: ${donePercent}%; background-color: var(--success-color);" title="منجزة">${classStats.done > 0 ? classStats.done : ''}</div>
+                                    <div class="progress-bar" role="progressbar" style="width: ${incompletePercent}%; background-color: var(--incomplete-color);" title="غير مكتملة">${classStats.incomplete > 0 ? classStats.incomplete : ''}</div>
+                                    <div class="progress-bar" role="progressbar" style="width: ${pendingPercent}%; background-color: var(--pending-color);" title="غير منجزة">${classStats.pending > 0 ? classStats.pending : ''}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
+                classOptionsHTML += `<option value="${classId}">${classInfo.className}</option>`;
+            });
+            statsContent.innerHTML = `
+                <div class="stats-grid">
+                    <div class="card stat-card"><div class="card-body"><div class="value">${Object.keys(settings).length}</div><div class="label">الأقسام المسندة</div></div></div>
+                    <div class="card stat-card"><div class="card-body"><div class="value" style="color:var(--success-color)">${overallStats.done}</div><div class="label">حصص منجزة</div></div></div>
+                    <div class="card stat-card"><div class="card-body"><div class="value" style="color:var(--incomplete-color)">${overallStats.incomplete}</div><div class="label">غير مكتملة</div></div></div>
+                    <div class="card stat-card"><div class="card-body"><div class="value" style="color:var(--pending-color)">${overallStats.pending}</div><div class="label">غير منجزة</div></div></div>
+                </div>
+                <div class="card"><h3>نظرة عامة على الأقسام</h3><div class="row">${classDetailsHTML}</div></div>
+                <div class="card">
+                    <div class="control-group"><div><label for="stats-class-select">عرض إحصائيات القسم:</label><select id="stats-class-select" class="form-select">${classOptionsHTML}</select></div></div>
+                    <div style="max-height: 400px; position: relative;"><canvas id="lesson-chart"></canvas></div>
+                </div>`;
+            updateChart('all');
+            document.getElementById('stats-class-select').addEventListener('change', (e) => updateChart(e.target.value));
+        };
+        
+        const updateChart = (classId) => {
+            const stats = getStatsData(classId);
+            const ctx = document.getElementById('lesson-chart')?.getContext('2d');
+            if (!ctx) return;
+            const isDark = document.body.classList.contains('dark-mode');
+            const chartData = {
+                labels: ['منجزة', 'غير مكتملة', 'غير منجزة'],
+                datasets: [{ label: 'حالة الحصص', data: [stats.done, stats.incomplete, stats.pending], backgroundColor: [ 'rgba(46, 204, 113, 0.7)', 'rgba(52, 152, 219, 0.7)', 'rgba(230, 126, 34, 0.7)' ], borderColor: [ '#2ecc71', '#3498db', '#e67e22' ], borderWidth: 1 }]
+            };
+            if (lessonChart) lessonChart.destroy();
+            lessonChart = new Chart(ctx, { type: 'doughnut', data: chartData, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top', labels: { color: isDark ? 'white' : '#666' } } } } });
+        };
+        
+        const getStatsData = (classIdFilter = 'all') => {
+            const tracker = getDb('lessonTracker');
+            const settings = getDb('teacherSettings');
+            const counts = { done: 0, incomplete: 0, pending: 0, total: 0 };
+            const classIdsToProcess = classIdFilter === 'all' ? Object.keys(settings) : [classIdFilter];
+
+            classIdsToProcess.forEach(classId => {
+                if (!settings[classId]) return;
+                const { levelId } = settings[classId];
+                data[levelId]?.stages.forEach((stage, stageIdx) => {
+                    stage.units.forEach((unit, unitIdx) => {
+                        unit.sessions.forEach((session, sessionIdx) => {
+                            if(unit.name.includes('الوقفة التقويمية') && !session) return;
+                            counts.total++;
+                            const lessonId = `${classId}-${stageIdx}-${unitIdx}-${sessionIdx}`;
+                            counts[tracker[lessonId]?.status || 'pending']++;
+                        });
+                    });
+                });
+            });
+            return counts;
+        };
+
+        const getLessonInfo = (lessonId) => {
+            const parts = lessonId.split('-');
+            if (parts.length < 5) return null;
+            const classId = `${parts[0]}-${parts[1]}`;
+            const [stageIdx, unitIdx, sessionIdx] = parts.slice(2).map(Number);
+            
+            const settings = getDb('teacherSettings');
+            const classInfo = settings[classId];
+            if (!classInfo) return null;
+
+            const { levelId } = classInfo;
+            const levelData = data[levelId];
+            const stage = levelData?.stages[stageIdx];
+            const unit = stage?.units[unitIdx];
+            const sessionTitle = unit?.sessions[sessionIdx];
+
+            if (sessionTitle === undefined) return null;
+
+            return {
+                classId, classInfo, levelId, levelData,
+                stageIdx, stage, unitIdx, unit,
+                sessionIdx, sessionTitle
+            };
+        };
+        
+        const renderJournal = () => {
+            const tableBody = document.getElementById('journal-table-body');
+            const tracker = getDb('lessonTracker');
+            tableBody.innerHTML = '';
+
+            const doneLessons = Object.entries(tracker)
+                .filter(([,d]) => d.status === 'done')
+                .map(([id, d]) => {
+                    const parts = id.split('-');
+                    const lessonKey = `${parts[0]}-${parts.slice(2).join('-')}`; 
+                    return { id, ...d, lessonKey };
+                })
+                .sort((a, b) => (a.date || '').localeCompare(b.date || ''));
+
+            if (doneLessons.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="4" class="text-center p-5">لا توجد حصص منجزة لعرضها في دفتر النصوص بعد.</td></tr>`;
+                return;
+            }
+
+            const groupedLessons = doneLessons.reduce((acc, current) => {
+                (acc[current.lessonKey] = acc[current.lessonKey] || []).push(current);
+                return acc;
+            }, {});
+
+            let lessonCounter = 0;
+            for (const lessonKey in groupedLessons) {
+                lessonCounter++;
+                const entries = groupedLessons[lessonKey].sort((a,b) => (a.date || '').localeCompare(b.date || ''));
+                const firstEntry = entries[0];
+                const lessonInfo = getLessonInfo(firstEntry.id);
+                if (!lessonInfo) continue;
+
+                const { levelId, stage, unit, sessionTitle, stageIdx, unitIdx, sessionIdx } = lessonInfo;
+                const { opening, activities, closing } = tracker[firstEntry.id] || {};
+                
+                const fullActivities = generateBriefActivities(lessonInfo);
+
+                let structure = { 
+                    opening: opening || ['النشاط الاعتيادي', 'الواجب المنزلي', 'المكتسبات', 'التصريح بالأهداف'], 
+                    activities: activities || fullActivities, 
+                    closing: closing || ['التذكير بما تم تعلمه', 'الواجب المنزلي'] 
+                };
+
+                const numberItems = (items) => items.map((item, i) => `${i + 1}. ${item.replace(/^\d+\.\s*/, '')}`);
+                
+                structure.opening = numberItems(structure.opening);
+                structure.activities = numberItems(structure.activities);
+                structure.closing = numberItems(structure.closing);
+                
+                const createList = (items) => `<ol>${items.map(item => `<li>${item}</li>`).join('')}</ol>`;
+                
+                const globalUnitIndex = (stageIdx * (data[levelId].stages[stageIdx].units.length-1)) + unitIdx + 1;
+                const unitNumber = unit.name.includes("الوقفة التقويمية") ? '' : `الوحدة ${globalUnitIndex}: `;
+                const lessonMeta = `المرحلة: ${stageIdx + 1} | ${unitNumber}${unit.name} | الحصة: ${sessionIdx + 1}`;
+                
+                const lessonDetailsHTML = `
+                    <div class="lesson-main-info"><p class="lesson-title">${sessionTitle.split(' - ص:')[0]}</p></div>
+                    <div class="lesson-structure-container">
+                        <table class="lesson-structure-table">
+                            <thead>
+                                <tr><th colspan="3" class="lesson-print-meta unit-color-${globalUnitIndex}">${lessonMeta}</th></tr>
+                                <tr><th>الافتتاح</th><th>أنشطة الحصة <small>نمذجة >> ممارسة موجهة >> ممارسة مستقلة</small></th><th>الاختتام</th></tr>
+                            </thead>
+                            <tbody><tr>
+                                <td>${createList(structure.opening)}<button class="edit-btn structure-edit-btn" data-lesson-id="${firstEntry.id}" data-section="opening" title="تعديل"><i class="fas fa-edit"></i></button></td>
+                                <td>${createList(structure.activities)}<button class="edit-btn structure-edit-btn" data-lesson-id="${firstEntry.id}" data-section="activities" title="تعديل"><i class="fas fa-edit"></i></button></td>
+                                <td>${createList(structure.closing)}<button class="edit-btn structure-edit-btn" data-lesson-id="${firstEntry.id}" data-section="closing" title="تعديل"><i class="fas fa-edit"></i></button></td>
+                            </tr></tbody>
+                        </table>
+                    </div>`;
+
+                const notesHTML = `
+                    <div class="note-content">${firstEntry.note || ''}</div>
+                    <button class="edit-btn" data-lesson-id="${firstEntry.id}" data-section="note" title="إضافة/تعديل ملاحظة"><i class="fas fa-edit"></i></button>`;
+
+                let allRowsHTML = '';
+                entries.forEach((entry, index) => {
+                    const className = getDb('teacherSettings')[entry.id.split('-').slice(0, 2).join('-')].className;
+                    const dateHTML = `
+                        <div class="cell-date-display"><span>${entry.date || 'غير محدد'}</span></div>
+                        <input type="date" class="form-control form-control-sm d-none journal-date-input" value="${entry.date || ''}" data-lesson-id="${entry.id}">
+                        <button class="edit-btn date-edit-btn" data-lesson-id="${entry.id}" title="تعديل التاريخ"><i class="fas fa-calendar-alt"></i></button>`;
+
+                    if (index === 0) {
+                        allRowsHTML += `
+                            <tr class="journal-entry">
+                                <td class="journal-cell cell-class">${className}</td>
+                                <td class="journal-cell cell-lesson-details" rowspan="${entries.length}">${lessonDetailsHTML}</td>
+                                <td class="journal-cell cell-date">${dateHTML}</td>
+                                <td class="journal-cell cell-notes" rowspan="${entries.length}">${notesHTML}</td>
+                            </tr>`;
+                    } else {
+                        allRowsHTML += `
+                            <tr class="journal-entry">
+                                <td class="journal-cell cell-class">${className}</td>
+                                <td class="journal-cell cell-date">${dateHTML}</td>
+                            </tr>`;
+                    }
+                });
+
+                if (lessonCounter % 4 === 0 && lessonCounter < Object.keys(groupedLessons).length) {
+                    allRowsHTML += `<tr class="signature-row"><td colspan="4"><div class="print-signature-footer"><span>توقيع الأستاذ: .................</span><span>توقيع المدير: .................</span><span>توقيع المفتش: .................</span></div></td></tr>`;
+                }
+                tableBody.innerHTML += allRowsHTML;
+            }
+        };
+
+        const openEditModal = (lessonId, section) => {
+            const tracker = getDb('lessonTracker');
+            const lessonData = tracker[lessonId] || {};
+            const modalTitle = document.getElementById('modal-title');
+            const textarea = document.getElementById('note-textarea');
+            const saveBtn = document.getElementById('save-note-btn');
+            
+            const parts = section.split('_');
+            const mainSection = parts[0];
+            const rowIndex = parts[1];
+            
+            const sectionTitles = { note: 'ملاحظات', opening: 'أنشطة الافتتاح', activities: 'أنشطة الحصة', closing: 'أنشطة الاختتام', cardDesc: 'توصيف مختصر', cardType: 'نوع الحلقة', cardTime: 'الوقت', cardAids: 'المعينات', cardPage: 'صفحة الكراسة'};
+            modalTitle.textContent = `تعديل: ${sectionTitles[mainSection]}`;
+            
+            if (mainSection === 'note') {
+                textarea.value = lessonData.note || '';
+                textarea.rows = 8;
+            } else if (['opening', 'activities', 'closing'].includes(mainSection)) {
+                const lessonInfo = getLessonInfo(lessonId);
+                const fullActivities = generateBriefActivities(lessonInfo);
+                const defaultContent = 
+                    (mainSection === 'opening') ? ['النشاط الاعتيادي', 'الواجب المنزلي', 'المكتسبات', 'التصريح بالأهداف'] : 
+                    (mainSection === 'activities') ? fullActivities : 
+                    ['التذكير بما تم تعلمه', 'الواجب المنزلي'];
+                const content = lessonData[mainSection] || defaultContent;
+                textarea.value = content.map(item => item.replace(/^\d+\.\s*/, '')).join('\n');
+                textarea.rows = 8;
+            } else if (['cardDesc', 'cardType', 'cardTime', 'cardAids', 'cardPage'].includes(mainSection)) {
+                 const lessonInfo = getLessonInfo(lessonId);
+                 const plan = getDetailedLessonPlan(lessonInfo);
+                 const fieldMap = { cardDesc: 'description', cardType: 'type', cardTime: 'time', aids: 'aids', cardPage: 'page' };
+                 const field = fieldMap[mainSection];
+                 const customPlan = lessonData.customPlan || [];
+                 const defaultVal = plan[rowIndex] ? (plan[rowIndex][field] || '') : '';
+                 const currentVal = customPlan[rowIndex] ? (customPlan[rowIndex][field] ?? defaultVal) : defaultVal;
+                 textarea.value = currentVal;
+                 textarea.rows = mainSection === 'cardDesc' ? 5 : 2;
+            }
+
+            saveBtn.dataset.lessonId = lessonId;
+            saveBtn.dataset.section = section;
+            noteModalInstance.show();
+        };
+
+        const saveModalContent = () => {
+            const { lessonId, section } = document.getElementById('save-note-btn').dataset;
+            if (!lessonId || !section) return;
+            
+            const tracker = getDb('lessonTracker');
+            tracker[lessonId] = tracker[lessonId] || {};
+            const textareaValue = document.getElementById('note-textarea').value;
+            
+            const parts = section.split('_');
+            const mainSection = parts[0];
+            const rowIndex = parseInt(parts[1], 10);
+
+            if(['note', 'opening', 'activities', 'closing'].includes(mainSection)) {
+                const idParts = lessonId.split('-');
+                const lessonKey = `${idParts[0]}-${idParts.slice(2).join('-')}`; 
+
+                Object.keys(tracker).forEach(key => {
+                    const keyParts = key.split('-');
+                    const currentItemKey = `${keyParts[0]}-${keyParts.slice(2).join('-')}`;
+                    
+                    if(currentItemKey === lessonKey){
+                        tracker[key] = tracker[key] || {};
+                        if (mainSection === 'note') {
+                            tracker[key].note = textareaValue;
+                        } else {
+                            tracker[key][mainSection] = textareaValue.split('\n').filter(line => line.trim() !== '');
+                        }
+                    }
+                });
+            } else if (['cardDesc', 'cardType', 'cardTime', 'cardAids', 'cardPage'].includes(mainSection)) {
+                const idParts = lessonId.split('-');
+                const lessonKey = `${idParts[0]}-${idParts.slice(2).join('-')}`; 
+
+                 Object.keys(tracker).forEach(key => {
+                    const keyParts = key.split('-');
+                    const currentItemKey = `${keyParts[0]}-${keyParts.slice(2).join('-')}`;
+
+                    if(currentItemKey === lessonKey){
+                        tracker[key] = tracker[key] || {};
+                        tracker[key].customPlan = tracker[key].customPlan || [];
+                        const plan = getDetailedLessonPlan(getLessonInfo(key));
+                        while (tracker[key].customPlan.length < plan.length) {
+                            tracker[key].customPlan.push({});
+                        }
+                        const fieldMap = { cardDesc: 'description', cardType: 'type', cardTime: 'time', aids: 'aids', cardPage: 'page' };
+                        const field = fieldMap[mainSection];
+                        tracker[key].customPlan[rowIndex][field] = textareaValue;
+                    }
+                });
+            }
+            
+            setDb('lessonTracker', tracker);
+            noteModalInstance.hide();
+            showToast('تم حفظ التعديلات بنجاح.');
+            
+            if (document.getElementById('page-journal').classList.contains('active')) renderJournal();
+            if (document.getElementById('page-cards').classList.contains('active')) displayCards();
+        };
+        
+        const renderSettingsPage = () => {
+            const container = document.getElementById('teacher-settings-container');
+            container.innerHTML = `<div id="settings-content"><ul class="nav nav-tabs" id="settings-tabs-nav" role="tablist"></ul><div class="tab-content border border-top-0 rounded-bottom p-3" id="settings-tabs-content"></div><div class="mt-4 d-flex justify-content-end"><button id="save-teacher-settings" class="btn save-btn">حفظ الإعدادات</button></div></div>`;
+            
+            const nav = document.getElementById('settings-tabs-nav');
+            const content = document.getElementById('settings-tabs-content');
+            Object.entries(data).forEach(([levelId, levelData], index) => {
+                const isActive = index === 0;
+                nav.innerHTML += `<li class="nav-item" role="presentation"><button class="nav-link ${isActive ? 'active' : ''}" data-bs-toggle="tab" data-bs-target="#level-tab-${levelId}" type="button">${levelData.name}</button></li>`;
+                
+                const classCheckboxes = Array.from({length: 16}, (_, i) => {
+                    const classId = `${levelId}-${i+1}`, className = `${levelData.name.split(' ')[0]} ${i+1}`;
+                    return `<div class="form-check"><input class="form-check-input" type="checkbox" id="${classId}" value="${classId}" data-class-name="${className}" data-level-id="${levelId}"><label class="form-check-label" for="${classId}">${className}</label></div>`;
+                }).join('');
+
+                content.innerHTML += `<div class="tab-pane fade ${isActive ? 'show active' : ''}" id="level-tab-${levelId}"><div class="p-3"><h5 class="mb-3">حدد الأقسام المسندة إليك للمستوى: ${levelData.name}</h5><div class="class-selection-grid">${classCheckboxes}</div></div></div>`;
+            });
+            loadTeacherSettings();
+        };
+        
+        const loadTeacherSettings = () => {
+            const settings = getDb('teacherSettings');
+            Object.keys(settings).forEach(classId => {
+                const checkbox = document.getElementById(classId);
+                if (checkbox) checkbox.checked = true;
+            });
+        };
+        
+        const saveTeacherSettings = () => {
+            let settings = {};
+            document.querySelectorAll('.class-selection-grid input:checked').forEach(checkbox => {
+                const { value: classId, dataset: { levelId, className } } = checkbox;
+                settings[classId] = { levelId, className };
+            });
+            setDb('teacherSettings', settings);
+            upcomingLessonsCache = null;
+            updateNotificationBell();
+            confirmationModalInstance.show();
+            checkCompassPrerequisites();
+            if (document.getElementById('page-stats').classList.contains('active')) renderStatisticsPage();
+        };
+
+        const renderInstructionsPage = () => {
+             document.querySelector('.instructions-content').innerHTML = `<ul>
+                <li><strong>الخطوة الأولى: إعدادات الأستاذ</strong><ul><li>اذهب إلى تبويب "الإعدادات" من القائمة الجانبية.</li><li>انقر على أيقونة <i class="fas fa-user-cog"></i> بجانب العنوان لإدخال معلوماتك الشخصية (الاسم، المؤسسة...).</li><li>افتح تبويب المستوى الدراسي الذي تدرّسه (الأولى، الثانية، أو الثالثة إعدادي).</li><li><strong>حدد الأقسام:</strong> قم باختيار كل الأقسام المسندة إليك في كل مستوى.</li><li><strong>حفظ الإعدادات:</strong> انقر على زر "حفظ الإعدادات" عند الانتهاء.</li></ul></li>
+                <li><strong>الخطوة الثانية: استعمال الزمن والتنبيهات</strong><ul><li>من صفحة "الإعدادات"، انقر على أيقونة <i class="fas fa-calendar-alt"></i> لفتح استعمال الزمن.</li><li>انقر على الخانات لتعبئتها بالأقسام المسندة إليك.</li><li>بعد الحفظ، سيظهر جرس <i class="fas fa-bell"></i> بجانب شعار التطبيق. إذا كانت لديك حصص في يوم العمل القادم.</li><li>انقر على الجرس لعرض بطاقات الحصص القادمة.</li></ul></li>
+                <li><strong>الخطوة الثالثة: استعراض وتتبع الحصص (البوصلة)</strong><ul><li>اذهب إلى تبويب "البوصلة".</li><li>استخدم الفلاتر في الأعلى لاختيار القسم، المرحلة، الوحدة أو حصة معينة.</li><li><strong>تغيير حالة الحصة:</strong> انقر على حالة الحصة لتغييرها (غير منجزة > غير مكتملة > منجزة).</li><li>عند اختيار "منجزة"، سيظهر حقل لاختيار تاريخ الإنجاز.</li></ul></li>
+                <li><strong>الخطوة الرابعة: دفتر النصوص والبطاقة التقنية</strong><ul><li>اذهب إلى تبويب "دفتر النصوص" لعرض كل الحصص المنجزة. يمكنك تعديل الأنشطة وتاريخ الإنجاز والملاحظات مباشرة.</li><li>اذهب إلى تبويب "البطاقة التقنية" لاختيار وعرض البطاقة المفصلة لأي حصة. يمكنك تعديل جميع تفاصيل البطاقة.</li><li>يمكنك طباعة الدفتر أو البطاقات كملف PDF.</li></ul></li>
+                <li><strong>الخطوة الخامسة: النسخ الاحتياطي</strong><ul><li>من القائمة الجانبية، أسفل "الوضع الليلي"، ستجد قسم "نسخة احتياطية".</li><li>انقر على "تصدير البيانات" لحفظ كل أعمالك في ملف. احتفظ بهذا الملف في مكان آمن.</li><li>إذا حدث خطأ أو انتقلت لجهاز آخر، يمكنك استخدام "استيراد البيانات" لاسترجاع كل شيء.</li></ul></li>
+                </ul>`;
+        };
+        
+        const checkCompassPrerequisites = () => {
+            const compassContent = document.getElementById('compass-content');
+            if (Object.keys(getDb('teacherSettings')).length === 0) {
+                compassContent.innerHTML = `<div class="alert alert-info">لعرض محتوى البوصلة، يرجى الانتقال إلى صفحة "الإعدادات" أولاً.</div>`;
+                document.getElementById('compass-subtitle').textContent = "يرجى إتمام الإعدادات أولاً.";
+            } else {
+                compassContent.innerHTML = `<div class="card">
+                    <div class="control-group">
+                        <div><label for="class-select">القسم:</label><select id="class-select" class="form-select"></select></div>
+                        <div><label for="stage-select">المرحلة:</label><select id="stage-select" class="form-select"></select></div>
+                        <div><label for="unit-select">الوحدة:</label><select id="unit-select" class="form-select"></select></div>
+                        <div><label for="session-select">الحصة:</label><select id="session-select" class="form-select"></select></div>
+                    </div>
+                </div><div id="content-display"></div>`;
+                populateMainClassSelector('#class-select');
+                loadLastView();
+            }
+        };
+
+        const updateDynamicLinks = () => {
+            const container = document.getElementById('compass-header-links');
+            const classSelect = document.getElementById('class-select');
+            const bookLink = document.getElementById('student-book-link');
+            const pptLink = document.getElementById('ppt-lessons-link');
+            
+            if (!container || !classSelect) return;
+
+            const classId = classSelect.value;
+            if (!classId) {
+                container.classList.add('d-none');
+                container.classList.remove('d-lg-flex');
+                return;
+            }
+
+            const levelId = classId.split('-')[0];
+            const links = externalLinks[levelId];
+
+            if (links) {
+                bookLink.href = links.book;
+                pptLink.href = links.ppt;
+                container.classList.remove('d-none');
+                container.classList.add('d-lg-flex');
+            } else {
+                container.classList.add('d-none');
+                container.classList.remove('d-lg-flex');
+            }
+        };
+
+        const loadLastView = () => {
+            const classSelect = document.getElementById('class-select');
+            const { classId, stageIndex, unitIndex, sessionIndex } = getDb('lastView') || {};
+            
+            if (classId && classSelect && Array.from(classSelect.options).some(opt => opt.value === classId)) {
+                classSelect.value = classId;
+                updateFilterOptions(classSelect);
+                document.getElementById('stage-select').value = stageIndex;
+                updateFilterOptions(document.getElementById('stage-select'));
+                document.getElementById('unit-select').value = unitIndex;
+                updateFilterOptions(document.getElementById('unit-select'));
+                document.getElementById('session-select').value = sessionIndex;
+            } else {
+                classSelect.value = ""; 
+                updateFilterOptions(classSelect);
+            }
+             displayContent();
+        };
+        
+        const handleJournalDateEdit = (button) => {
+            const cell = button.closest('.cell-date');
+            cell.querySelector('.cell-date-display').classList.add('d-none');
+            button.classList.add('d-none');
+            const input = cell.querySelector('.journal-date-input');
+            input.classList.remove('d-none');
+            input.focus();
+        };
+        
+        const saveJournalDate = (input) => {
+            const lessonId = input.dataset.lessonId;
+            const value = input.value;
+            const tracker = getDb('lessonTracker');
+            if (tracker[lessonId]) {
+                tracker[lessonId].date = value;
+                setDb('lessonTracker', tracker);
+                showToast('تم تحديث تاريخ الإنجاز.');
+            }
+            renderJournal();
+        };
+
+        const addGlobalEventListeners = () => {
+            document.body.addEventListener('click', (e) => {
+                const statusToggle = e.target.closest('.status-toggle');
+                if (statusToggle) {
+                    e.preventDefault();
+                    handleStatusToggle(statusToggle);
+                }
+
+                const editBtn = e.target.closest('.edit-btn');
+                if (editBtn && editBtn.classList.contains('date-edit-btn')) handleJournalDateEdit(editBtn);
+                else if (editBtn) openEditModal(editBtn.dataset.lessonId, editBtn.dataset.section);
+                
+                if (e.target.closest('#save-teacher-settings')) saveTeacherSettings();
+                if (e.target.closest('#save-note-btn')) saveModalContent();
+                if (e.target.closest('#save-teacher-info-btn')) saveTeacherInfo();
+                if (e.target.closest('#teacher-info-btn')) openTeacherInfoModal();
+                if (e.target.closest('#export-data-btn')) exportData();
+                if (e.target.closest('#import-data-btn')) document.getElementById('import-file-input').click();
+                if (e.target.closest('#timetable-btn')) openTimetableModal();
+                if (e.target.closest('#save-timetable-btn')) saveTimetable();
+                if (e.target.closest('#notification-bell')) openUpcomingLessonsModal();
+                
+                const timetableSlot = e.target.closest('.timetable-slot');
+                if (timetableSlot) {
+                    handleTimetableClick(e);
+                } else if (!e.target.closest('#class-selector-container')) {
+                     document.getElementById('class-selector-container')?.classList.add('d-none');
+                }
+
+
+                const printButton = e.target.closest('#print-journal-btn, #print-cards-btn');
+                if (printButton) {
+                    const isJournal = printButton.id === 'print-journal-btn';
+                    const isCards = printButton.id === 'print-cards-btn';
+                    let title = isJournal ? 'دفتر النصوص' : 'البطاقة التقنية';
+                    const originalTitle = document.title;
+                    document.body.classList.toggle('printing-cards', isCards);
+                    document.body.classList.toggle('printing-journal', isJournal);
+                    document.getElementById('print-title-header').textContent = title;
+                    document.title = title;
+                    setTimeout(() => {
+                        window.print();
+                        document.title = originalTitle;
+                        document.body.classList.remove('printing-cards', 'printing-journal');
+                    }, 100);
+                }
+            });
+
+            document.body.addEventListener('change', e => { 
+                if (e.target.matches('.journal-date-input')) saveJournalDate(e.target); 
+                if (e.target.matches('#import-file-input')) importData(e.target);
+                if (e.target.matches('.completion-date')) saveCompletionDate(e.target);
+                if (e.target.closest('#compass-content .form-select')) { updateFilterOptions(e.target); displayContent(); }
+                if (e.target.closest('#page-cards .control-group .form-select')) { updateFilterOptions(e.target, true); displayCards(); }
+                if (e.target.matches('#timetable-class-selector')) {
+                    const selector = e.target;
+                    const slotId = selector.dataset.slotId;
+                    const classId = selector.value;
+                    const cell = document.querySelector(`.timetable-slot[data-slot-id="${slotId}"]`);
+                    tempTimetable[slotId] = classId;
+                    const settings = getDb('teacherSettings');
+                    cell.textContent = classId ? settings[classId]?.className : '';
+                    selector.parentElement.classList.add('d-none');
+                }
+            });
+
+            document.body.addEventListener('blur', e => { if(e.target.matches('.journal-date-input:not(.d-none)')) saveJournalDate(e.target); }, true);
+            document.getElementById('confirm-save-ok-btn').addEventListener('click', () => { confirmationModalInstance.hide(); switchPage('page-compass'); });
+            document.querySelector('.sidebar-overlay').addEventListener('click', () => document.getElementById('sidebar').classList.remove('show'));
+        };
+        
+        const populateMainClassSelector = (selector) => {
+            const classSelect = document.querySelector(selector);
+            if (!classSelect) return;
+            classSelect.innerHTML = '<option value="">-- اختر القسم --</option>' + Object.entries(getDb('teacherSettings')).map(([classId, classInfo]) => `<option value="${classId}">${classInfo.className}</option>`).join('');
+        };
+
+        const updateFilterOptions = (changedElement, isCardPage = false) => {
+            const prefix = isCardPage ? 'card-' : '';
+            const classSelect = document.getElementById(`${prefix}class-select`);
+            const stageSelect = document.getElementById(`${prefix}stage-select`);
+            const unitSelect = document.getElementById(`${prefix}unit-select`);
+            const sessionSelect = document.getElementById(`${prefix}session-select`);
+            
+            const settings = getDb('teacherSettings');
+            const classId = classSelect.value;
+
+            if (!classId) {
+                stageSelect.innerHTML = '<option value="all">الكل</option>';
+                unitSelect.innerHTML = '<option value="all">الكل</option>';
+                sessionSelect.innerHTML = '<option value="all">الكل</option>';
+                return;
+            }
+            const { levelId } = settings[classId];
+            const levelData = data[levelId];
+            
+            if (changedElement.id === `${prefix}class-select`) {
+                stageSelect.innerHTML = '<option value="all">كل المراحل</option>' + levelData.stages.map((s, i) => `<option value="${i}">${s.name}</option>`).join('');
+            }
+            
+            const stageIdx = stageSelect.value;
+            const stageData = stageIdx !== 'all' ? levelData.stages[stageIdx] : null;
+
+            if (changedElement.id !== `${prefix}unit-select` && changedElement.id !== `${prefix}session-select`) {
+                unitSelect.innerHTML = '<option value="all">كل الوحدات</option>';
+                if (stageData) unitSelect.innerHTML += stageData.units.map((u, i) => `<option value="${i}">${u.name}</option>`).join('');
+            }
+            
+            if (changedElement.id !== `${prefix}session-select`) {
+                sessionSelect.innerHTML = '<option value="all">كل الحصص</option>' + Array.from({length: 8}, (_, i) => `<option value="${i}">الحصة ${i + 1}</option>`).join('');
+            }
+        };
+
+        const displayContent = (containerId = 'content-display') => {
+            if(containerId === 'content-display') updateDynamicLinks();
+            const contentDisplay = document.getElementById(containerId);
+            const { value: classId } = document.getElementById('class-select');
+            const { value: stageIdx } = document.getElementById('stage-select');
+            const { value: unitIdx } = document.getElementById('unit-select');
+            const { value: sessionIdx } = document.getElementById('session-select');
+
+            if (!contentDisplay) return;
+            contentDisplay.innerHTML = '';
+            if (!classId) {
+                contentDisplay.innerHTML = `<div class="alert alert-secondary mt-3">يرجى اختيار قسم لعرض المحتوى.</div>`;
+                return;
+            }
+
+            const { levelId } = getDb('teacherSettings')[classId];
+            const tracker = getDb('lessonTracker');
+            const levelData = data[levelId];
+            let contentHTML = '';
+
+            levelData.stages.forEach((stage, s_idx) => {
+                if (stageIdx !== 'all' && parseInt(stageIdx) !== s_idx) return;
+
+                stage.units.forEach((unit, u_idx) => {
+                    if (unitIdx !== 'all' && parseInt(unitIdx) !== u_idx) return;
+                    
+                    let allSessionsHTML = '';
+                    unit.sessions.forEach((session, s_idx_in_unit) => {
+                         if (sessionIdx !== 'all' && parseInt(sessionIdx) !== s_idx_in_unit) return;
+                         if (unit.name.includes("الوقفة التقويمية") && !session) return;
+
+                        const lessonId = `${classId}-${s_idx}-${u_idx}-${s_idx_in_unit}`;
+                        const { status = 'pending', date: dateValue = getTodayDate() } = tracker[lessonId] || {};
+                        const statusInfo = lessonStatuses[status];
+                        
+                        allSessionsHTML += `<div class="card session-card">
+                            <div class="card-header session-card-header d-flex"><h6 class="mb-0"><strong>الحصة ${s_idx_in_unit + 1}</strong></h6><div class="status-toggle ${statusInfo.class}" data-lesson-id="${lessonId}">${statusInfo.text}</div></div>
+                            <div class="card-body"><p class="card-text">${session}</p></div>
+                            <div class="card-footer completion-date-container ${status === 'done' ? '' : 'd-none'}"><label for="date-${lessonId}" class="me-2">تاريخ الإنجاز:</label><input type="date" id="date-${lessonId}" class="form-control form-control-sm completion-date" value="${dateValue}" data-lesson-id="${lessonId}"></div>
+                        </div>`;
+                    });
+                    
+                    if (allSessionsHTML) {
+                        contentHTML += `<div class="unit-block"><h4 class="unit-title">${unit.name}</h4><div class="session-grid">${allSessionsHTML}</div></div>`;
+                    }
+                });
+            });
+            contentDisplay.innerHTML = contentHTML || '<div class="alert alert-secondary">لا توجد حصص تطابق هذا الفلتر.</div>';
+            if(containerId === 'content-display') setDb('lastView', { classId, stageIndex: stageIdx, unitIndex: unitIdx, sessionIndex: sessionIdx });
+        };
+
+        const handleStatusToggle = (target) => {
+            const { lessonId } = target.dataset;
+            const tracker = getDb('lessonTracker');
+            const currentStatus = tracker[lessonId]?.status || 'pending';
+            tracker[lessonId] = tracker[lessonId] || {};
+            const newStatus = lessonStatuses[currentStatus].next;
+            tracker[lessonId].status = newStatus;
+            
+            if (newStatus === 'done' && !tracker[lessonId].date) {
+                tracker[lessonId].date = getTodayDate();
+            }
+            
+            setDb('lessonTracker', tracker);
+            
+            if (document.getElementById('page-compass').classList.contains('active')) {
+                displayContent();
+            }
+        };
+
+        const saveCompletionDate = (target) => {
+            const lessonId = target.dataset.lessonId;
+            const value = target.value;
+            const tracker = getDb('lessonTracker');
+            if (tracker[lessonId]) { 
+                tracker[lessonId].date = value; 
+                setDb('lessonTracker', tracker); 
+                showToast('تم تحديث تاريخ الإنجاز.'); 
+            }
+        };
+
+        const openTeacherInfoModal = () => {
+            const info = getDb('teacherInfo');
+            document.getElementById('teacherName').value = info.name || '';
+            document.getElementById('teacherAcademy').value = info.academy || '';
+            document.getElementById('teacherDirectorate').value = info.directorate || '';
+            document.getElementById('teacherSchool').value = info.school || '';
+            teacherInfoModalInstance.show();
+        };
+        const saveTeacherInfo = () => {
+            const info = { name: document.getElementById('teacherName').value, academy: document.getElementById('teacherAcademy').value, directorate: document.getElementById('teacherDirectorate').value, school: document.getElementById('teacherSchool').value, };
+            setDb('teacherInfo', info);
+            teacherInfoModalInstance.hide();
+            showToast('تم حفظ معلومات الأستاذ بنجاح.');
+        };
+
+        const exportData = () => {
+            const backupData = { teacherSettings: getDb('teacherSettings'), lessonTracker: getDb('lessonTracker'), teacherInfo: getDb('teacherInfo'), teacherTimetable: getDb('teacherTimetable') };
+            const dataStr = JSON.stringify(backupData, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `bawsala_backup_${new Date().toISOString().slice(0,10)}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast('تم تصدير البيانات بنجاح.');
+        };
+        const importData = (fileInput) => {
+            const file = fileInput.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    if (importedData.teacherSettings && importedData.lessonTracker && importedData.teacherInfo) {
+                        setDb('teacherSettings', importedData.teacherSettings);
+                        setDb('lessonTracker', importedData.lessonTracker);
+                        setDb('teacherInfo', importedData.teacherInfo);
+                        if(importedData.teacherTimetable) setDb('teacherTimetable', importedData.teacherTimetable);
+                        showToast('تم استيراد البيانات بنجاح! سيتم تحديث الصفحة.', 'success');
+                        setTimeout(() => window.location.reload(), 2000);
+                    } else { throw new Error('الملف غير صالح.'); }
+                } catch (error) { showToast(`فشل استيراد البيانات: ${error.message}`, 'danger'); } 
+                finally { fileInput.value = ''; }
+            };
+            reader.readAsText(file);
+        };
+        
+        // --- TIMETABLE & NOTIFICATION LOGIC ---
+        const renderTimetable = () => {
+            const grid = document.getElementById('timetable-grid');
+            const settings = getDb('teacherSettings');
+            tempTimetable = JSON.parse(JSON.stringify(getDb('teacherTimetable')));
+            
+            let html = `<thead><tr><th>اليوم/الساعة</th>${timetableTimes.map(t => `<th>${t}</th>`).join('')}</tr></thead><tbody>`;
+            for (const [dayKey, dayName] of Object.entries(daysArabic)) {
+                if (dayKey === 'sunday') continue;
+                html += `<tr><td><strong>${dayName}</strong></td>`;
+                timetableTimes.forEach((time, timeIdx) => {
+                    const slotId = `${dayKey}-${timeIdx}`;
+                    const classId = tempTimetable[slotId] || '';
+                    const className = classId ? (settings[classId]?.className || 'قسم محذوف') : '';
+                    html += `<td class="timetable-slot" data-slot-id="${slotId}">${className}</td>`;
+                });
+                html += `</tr>`;
+            }
+            html += `</tbody>`;
+            grid.innerHTML = html;
+        };
+
+        const openTimetableModal = () => {
+            if (Object.keys(getDb('teacherSettings')).length === 0) {
+                 showToast('يرجى تحديد الأقسام أولاً في الإعدادات.', 'danger');
+                 return;
+            }
+            renderTimetable();
+            timetableModalInstance.show();
+        };
+        
+        const handleTimetableClick = (e) => {
+             const cell = e.target;
+             const slotId = cell.dataset.slotId;
+             const selectorContainer = document.getElementById('class-selector-container');
+             const settings = getDb('teacherSettings');
+
+             let options = '<option value="">-- قسم فارغ --</option>';
+             Object.entries(settings).forEach(([id, info]) => {
+                options += `<option value="${id}" ${tempTimetable[slotId] === id ? 'selected' : ''}>${info.className}</option>`;
+             });
+             
+             selectorContainer.innerHTML = `<select class="form-select" id="timetable-class-selector" data-slot-id="${slotId}">${options}</select>`;
+             
+             const rect = cell.getBoundingClientRect();
+             const modalBodyRect = cell.closest('.modal-body').getBoundingClientRect();
+             selectorContainer.style.top = `${rect.top - modalBodyRect.top}px`;
+             selectorContainer.style.right = `${modalBodyRect.right - rect.right}px`;
+             selectorContainer.style.width = `${rect.width}px`;
+             selectorContainer.style.minWidth = '150px';
+
+             selectorContainer.classList.remove('d-none');
+             selectorContainer.querySelector('select').focus();
+        };
+
+        const saveTimetable = () => {
+            setDb('teacherTimetable', tempTimetable);
+            upcomingLessonsCache = null;
+            timetableModalInstance.hide();
+            showToast('تم حفظ استعمال الزمن بنجاح.');
+            updateNotificationBell();
+        };
+        
+        const findUpcomingLessons = () => {
+            const timetable = getDb('teacherTimetable');
+            const tracker = getDb('lessonTracker');
+            const settings = getDb('teacherSettings');
+            
+            if (Object.keys(timetable).length === 0 || Object.keys(settings).length === 0) {
+                return { lessons: [], dateInfo: null };
+            }
+
+            const dayOrder = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+            const today = new Date();
+            
+            const findNextUndoneLesson = (classId, startFrom = { s_idx: 0, u_idx: 0, ss_idx: 0 }) => {
+                if (!settings[classId]) return null;
+                const { levelId } = settings[classId];
+                const levelData = data[levelId];
+                for (let s_idx = startFrom.s_idx; s_idx < levelData.stages.length; s_idx++) {
+                    const stage = levelData.stages[s_idx];
+                    const start_u_idx = (s_idx === startFrom.s_idx) ? startFrom.u_idx : 0;
+                    for (let u_idx = start_u_idx; u_idx < stage.units.length; u_idx++) {
+                        const unit = stage.units[u_idx];
+                        const start_ss_idx = (s_idx === startFrom.s_idx && u_idx === start_u_idx) ? startFrom.ss_idx : 0;
+                        for (let ss_idx = start_ss_idx; ss_idx < unit.sessions.length; ss_idx++) {
+                            const session = unit.sessions[ss_idx];
+                            if (unit.name.includes("الوقفة التقويمية") && !session) continue;
+                            const lessonId = `${classId}-${s_idx}-${u_idx}-${ss_idx}`;
+                            if (tracker[lessonId]?.status !== 'done') {
+                                return {
+                                    lessonId: lessonId,
+                                    nextPosition: { s_idx: s_idx, u_idx: u_idx, ss_idx: ss_idx + 1 }
+                                };
+                            }
+                        }
+                    }
+                }
+                return null;
+            };
+
+            for (let i = 0; i < 7; i++) {
+                const dateToCheck = new Date();
+                dateToCheck.setDate(today.getDate() + i);
+                const dayKey = dayOrder[dateToCheck.getDay()];
+                
+                const slotsForDay = Object.entries(timetable)
+                    .filter(([slotId, classId]) => slotId.startsWith(dayKey) && classId)
+                    .map(([slotId, classId]) => ({
+                        timeIndex: parseInt(slotId.split('-')[1]),
+                        classId: classId
+                    }))
+                    .sort((a, b) => a.timeIndex - b.timeIndex);
+
+                if (slotsForDay.length === 0) continue;
+
+                const lessonsForThisDay = [];
+                const nextLessonTrackerForClass = {};
+
+                for (const slot of slotsForDay) {
+                    const { classId, timeIndex } = slot;
+                    const startFrom = nextLessonTrackerForClass[classId] || { s_idx: 0, u_idx: 0, ss_idx: 0 };
+                    const nextLessonData = findNextUndoneLesson(classId, startFrom);
+
+                    if (nextLessonData) {
+                        lessonsForThisDay.push({
+                            lessonId: nextLessonData.lessonId,
+                            time: timetableTimes[timeIndex]
+                        });
+                        nextLessonTrackerForClass[classId] = nextLessonData.nextPosition;
+                    }
+                }
+                
+                if (lessonsForThisDay.length > 0) {
+                     const dateInfo = {
+                        dayName: daysArabic[dayKey],
+                        fullDate: dateToCheck.toLocaleDateString('ar-EG-u-nu-latn', { day: 'numeric', month: 'long', year: 'numeric' })
+                     };
+                    return { lessons: lessonsForThisDay, dateInfo };
+                }
+            }
+
+            return { lessons: [], dateInfo: null };
+        };
+
+        const getUpcomingLessonsWithCache = () => {
+            const todayStr = getTodayDate();
+            if (upcomingLessonsCache && upcomingLessonsCache.date === todayStr) {
+                return upcomingLessonsCache.data;
+            }
+            const lessonsData = findUpcomingLessons();
+            upcomingLessonsCache = { date: todayStr, data: lessonsData };
+            return lessonsData;
+        };
+
+        const updateNotificationBell = () => {
+             const bell = document.getElementById('notification-bell');
+             const badge = document.getElementById('notification-badge');
+             const upcoming = getUpcomingLessonsWithCache();
+             
+             if(upcoming && upcoming.lessons.length > 0) {
+                 bell.classList.remove('d-none');
+                 badge.textContent = upcoming.lessons.length;
+             } else {
+                 bell.classList.add('d-none');
+                 badge.textContent = '';
+             }
+        };
+        
+        const openUpcomingLessonsModal = () => {
+            const container = document.getElementById('upcoming-lessons-container');
+            const title = document.getElementById('upcoming-lessons-title');
+            const upcoming = getUpcomingLessonsWithCache();
+            container.innerHTML = '';
+            
+            title.textContent = 'الحصص المقبلة';
+            
+            if (!upcoming || upcoming.lessons.length === 0) {
+                container.innerHTML = '<div class="alert alert-info">لا توجد حصص مبرمجة في الأيام المقبلة.</div>';
+                upcomingLessonsModalInstance.show();
+                return;
+            }
+            
+            let contentHTML = '';
+            const settings = getDb('teacherSettings');
+
+            const groupedByClass = upcoming.lessons.reduce((acc, {lessonId, time}) => {
+                const classId = lessonId.split('-').slice(0, 2).join('-');
+                if (!acc[classId]) acc[classId] = { info: settings[classId], lessons: [] };
+                acc[classId].lessons.push({lessonId, time});
+                return acc;
+            }, {});
+
+            for (const classId in groupedByClass) {
+                const className = groupedByClass[classId].info?.className || 'قسم غير معروف';
+                let lessonsHtmlForClass = '';
+
+                groupedByClass[classId].lessons.forEach(({lessonId, time}) => {
+                    const lessonInfo = getLessonInfo(lessonId);
+                    if (!lessonInfo) return;
+                    
+                    const { sessionTitle, sessionIdx } = lessonInfo;
+                    lessonsHtmlForClass += `<div class="card session-card">
+                        <div class="card-header session-card-header d-flex align-items-center justify-content-between">
+                           <h6 class="mb-0"><strong>الحصة ${sessionIdx + 1}:</strong> ${sessionTitle}</h6>
+                           <span class="lesson-time flex-shrink-0 ms-2">${time}</span>
+                        </div>
+                    </div>`;
+                });
+
+                if (lessonsHtmlForClass) {
+                    contentHTML += `<h5 class="unit-title mt-3 mb-2">${className}</h5><div class="session-grid">${lessonsHtmlForClass}</div>`;
+                }
+            }
+
+            container.innerHTML = contentHTML;
+            upcomingLessonsModalInstance.show();
+        };
+
+        const setupAutoUpdate = () => {
+            setInterval(() => {
+                const now = new Date();
+                const todayStr = now.toISOString().slice(0, 10);
+                
+                if (localStorage.getItem('notifCacheClearedFor') === todayStr) {
+                    return;
+                }
+                
+                const dayOrder = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+                const dayKey = dayOrder[now.getDay()];
+                const timetable = getDb('teacherTimetable');
+                
+                const lastSlotIndex = Object.keys(timetable)
+                    .filter(slotId => slotId.startsWith(dayKey))
+                    .map(slotId => parseInt(slotId.split('-')[1]))
+                    .reduce((max, current) => Math.max(max, current), -1);
+
+                if (lastSlotIndex === -1) return;
+
+                const lastClassEndTimeStr = timetableTimes[lastSlotIndex].split(' - ')[1];
+                const [hours, minutes] = lastClassEndTimeStr.split(':').map(Number);
+
+                const triggerTime = new Date();
+                triggerTime.setHours(hours + 1, minutes, 0, 0);
+
+                if (now > triggerTime) {
+                    upcomingLessonsCache = null;
+                    updateNotificationBell();
+                    localStorage.setItem('notifCacheClearedFor', todayStr);
+                }
+            }, 600000);
+        };
+        // --- END TIMETABLE LOGIC ---
+
+        const renderCardsPage = () => {
+             if (Object.keys(getDb('teacherSettings')).length === 0) {
+                 document.getElementById('cards-display').innerHTML = `<div class="alert alert-info mt-3">يرجى الانتقال إلى صفحة "الإعدادات" أولاً لتحديد الأقسام.</div>`;
+                 document.querySelector('#page-cards .control-group').classList.add('d-none');
+                 return;
+             }
+            document.querySelector('#page-cards .control-group').classList.remove('d-none');
+            populateMainClassSelector('#card-class-select');
+            updateFilterOptions(document.getElementById('card-class-select'), true);
+            displayCards();
+        };
+
+        const displayCards = () => {
+             const display = document.getElementById('cards-display');
+             const classId = document.getElementById('card-class-select').value;
+             const stageIdx = document.getElementById('card-stage-select').value;
+             const unitIdx = document.getElementById('card-unit-select').value;
+             const sessionIdx = document.getElementById('card-session-select').value;
+            
+             if (!classId) {
+                 display.innerHTML = `<div class="alert alert-secondary mt-3">يرجى اختيار قسم لعرض البطاقة.</div>`;
+                 return;
+             }
+             display.innerHTML = '';
+             const { levelId } = getDb('teacherSettings')[classId];
+             const levelData = data[levelId];
+             levelData.stages.forEach((stage, s_idx) => {
+                 if (stageIdx !== 'all' && parseInt(stageIdx) !== s_idx) return;
+                 stage.units.forEach((unit, u_idx) => {
+                      if (unitIdx !== 'all' && parseInt(unitIdx) !== u_idx) return;
+                      unit.sessions.forEach((session, s_idx_in_unit) => {
+                           if (sessionIdx !== 'all' && parseInt(sessionIdx) !== s_idx_in_unit) return;
+                           if (unit.name.includes("الوقفة التقويمية") && !session) return;
+                           const lessonId = `${classId}-${s_idx}-${u_idx}-${s_idx_in_unit}`;
+                           display.innerHTML += generateCardHTML(lessonId);
+                      });
+                 });
+             });
+             if (display.innerHTML === '') {
+                 display.innerHTML = `<div class="alert alert-secondary mt-3">لا توجد بطاقات تطابق هذا الفلتر.</div>`;
+             }
+        };
+
+        const generateCardHTML = (lessonId) => {
+            const lessonInfo = getLessonInfo(lessonId);
+            if(!lessonInfo) return '';
+            const { classInfo, levelId, stage, unit, sessionTitle, stageIdx, unitIdx, sessionIdx } = lessonInfo;
+
+            const teacherInfo = getDb('teacherInfo');
+            const tracker = getDb('lessonTracker');
+            const lessonData = tracker[lessonId] || {};
+            
+            const plan = getDetailedLessonPlan(lessonInfo);
+            const objectives = generateObjectives(lessonInfo);
+            const customPlan = lessonData.customPlan || [];
+            
+            let lastStage = '';
+            let detailsRows = '';
+            plan.forEach((row, index) => {
+                const customRow = customPlan[index] || {};
+                const stageCell = row.stage !== lastStage ? `<td class="stage-cell" rowspan="${plan.filter(p => p.stage === row.stage).length}">${row.stage}</td>` : '';
+                lastStage = row.stage;
+                const getEditableField = (fieldName, defaultVal) => {
+                    const val = customRow[fieldName] ?? defaultVal ?? '';
+                    const sectionMap = { description: 'cardDesc', type: 'cardType', time: 'cardTime', aids: 'cardAids', page: 'cardPage' };
+                    const sectionName = `${sectionMap[fieldName]}_${index}`;
+                    return `<div>${val.replace(/\n/g, '<br>')}</div><button class="edit-btn" data-lesson-id="${lessonId}" data-section="${sectionName}"><i class="fas fa-edit"></i></button>`;
+                };
+                detailsRows += `<tr>${stageCell}<td>${row.activity}</td><td class="description-cell">${getEditableField('description', row.description)}</td><td>${getEditableField('type', row.type)}</td><td>${getEditableField('time', row.time)}</td><td>${getEditableField('aids', row.aids)}</td><td>${getEditableField('page', row.page)}</td></tr>`;
+            });
+            
+            const globalUnitIndex = (stageIdx * (data[levelId].stages[stageIdx].units.length-1)) + unitIdx + 1;
+            
+            return `
+            <div class="tech-card level-${levelId} unit-${globalUnitIndex}">
+                <div class="tech-card-header">
+                    <div class="header-col"><p><strong>الأكاديمية:</strong> ${teacherInfo.academy||'...'}</p><p><strong>المديرية:</strong> ${teacherInfo.directorate||'...'}</p><p><strong>المؤسسة:</strong> ${teacherInfo.school||'...'}</p></div>
+                    <div class="header-col"><h5>البطاقة التقنية لدرس:</h5><h5>${sessionTitle.split(' - ص:')[0]}</h5></div>
+                    <div class="header-col"><p><strong>الأستاذ:</strong> ${teacherInfo.name||'...'}</p><p><strong>الفئة المستهدفة:</strong> ${classInfo.className}</p><p><strong>المستوى:</strong> ${data[levelId].name}</p></div>
+                </div>
+                <div class="tech-card-body">
+                    <h5 class="text-center mb-3">المعطيات العامة للحصة</h5>
+                    <table class="table table-bordered tech-card-general-info"><tbody>
+                        <tr><th>المرحلة</th><td colspan="2">${stage.name}</td><th>الوحدة</th><td colspan="2">${unit.name}</td></tr>
+                        <tr><th>الحصة</th><td>${sessionIdx + 1}</td><th>الأهداف</th><td colspan="3" class="text-start" style="white-space: pre-wrap; vertical-align: middle;">${objectives.join('<br>')}</td></tr>
+                    </tbody></table>
+                    <h5 class="text-center my-4">البرنامج التفصيلي لأنشطة الحصة</h5>
+                     <table class="table table-bordered tech-card-details-table"><thead class="table-light">
+                           <tr><th>المراحل</th><th>الأنشطة</th><th>توصيف مختصر</th><th>نوع الحلقة</th><th>الوقت المخصص</th><th>المعينات الديداكتيكية</th><th>صفحة الكتاب</th></tr>
+                        </thead><tbody>${detailsRows}</tbody></table>
+                </div>
+            </div>`;
+        };
+
+        const generateObjectives = (lessonInfo) => {
+            const { sessionTitle, unit, stage } = lessonInfo;
+            const type = getLessonType(sessionTitle);
+            
+            const template = lessonPlanTemplates[type];
+            if (!template) return ['- تحديد أهداف الحصة.'];
+
+            let arg1, arg2, arg3;
+            const mainTitle = sessionTitle.split(':')[1]?.split(' - ')[0].trim() || sessionTitle;
+
+            if (type === 'eval_written_test' || type === 'eval_speaking') {
+                arg1 = stage.name;
+            } else if (type.startsWith('eval')) {
+                arg1 = unit.name;
+            } else if (type === 'speaking') {
+                 arg1 = unit.name;
+            } else if (type === 'grammar') {
+                arg1 = mainTitle || 'الظاهرة اللغوية';
+            } else if (type === 'reading1' || type === 'reading2') {
+                 arg1 = mainTitle || 'النص';
+                 arg2 = unit.name;
+            } else if (type === 'writing1' || type === 'writing2') {
+                let writingTopic = mainTitle;
+                if (!mainTitle || mainTitle.startsWith('الإنتاج الكتابي')) {
+                    const writingSession1 = unit.sessions.find(s => s.includes('الإنتاج الكتابي') && !/(\(2\)| 2:)/.test(s));
+                    if (writingSession1 && writingSession1.includes(':')) {
+                        writingTopic = writingSession1.split(':')[1].split(' - ')[0].trim();
+                    } else if (writingSession1) { 
+                         writingTopic = writingSession1;
+                    } else {
+                        writingTopic = 'الموضوع المحدد';
+                    }
+                }
+                arg1 = (type === 'writing1') ? getWritingTextType(lessonInfo) : writingTopic;
+                arg2 = unit.name;
+                arg3 = (type === 'writing1') ? writingTopic : undefined;
+            } else {
+                 arg1 = unit.name;
+            }
+
+            return template.aims(arg1, arg2, arg3);
+        };
+        
+        const generateBriefActivities = (lessonInfo) => {
+             const { sessionTitle } = lessonInfo;
+             const type = getLessonType(sessionTitle);
+             const template = lessonPlanTemplates[type];
+             if (!template || !template.briefActivities) return ['تقديم الدرس', 'أنشطة التطبيق', 'تقويم'];
+             
+             let arg1;
+             if(type === 'grammar') {
+                 arg1 = sessionTitle.split(':')[1]?.split(' - ')[0].trim() || 'الظاهرة اللغوية';
+             } else if(type === 'speaking') {
+                 arg1 = lessonInfo.unit.name;
+             } else if(type === 'writing1' || type === 'writing2') {
+                 arg1 = getWritingTextType(lessonInfo) || 'النص المطلوب';
+             }
+             
+             return template.briefActivities(arg1);
+        };
+
+        const getDetailedLessonPlan = (lessonInfo) => {
+            const { sessionTitle } = lessonInfo;
+            const plan = [];
+            const pageNumber = sessionTitle.match(/ص:\s*([\d-]+)/)?.[1] || '';
+
+            const openingActivities = [
+                { activity: 'النشاط الاعتيادي', description: 'حكمة، لغز، لعبة...', type: '...', time: '4 دقائق', aids: 'شرائح ppt' },
+                { activity: 'الواجب المنزلي', description: 'مراقبة، تصحيح، تشجيع', type: '...', time: '3 دقائق', aids: 'الدفاتر + السبورة' },
+                { activity: 'المكتسبات', description: 'مكتسبات الدرس السابق', type: '...', time: 'دقيقتان', aids: 'السبورة' },
+                { activity: 'التصريح بالأهداف', description: 'أهداف الحصة', type: '...', time: 'دقيقة واحدة', aids: 'شرائح ppt' }
+            ];
+            openingActivities.forEach(item => plan.push({ stage: "افتتاح الحصة", ...item }));
+
+            const type = getLessonType(sessionTitle);
+            const template = lessonPlanTemplates[type];
+            
+            if (template && template.activities) {
+                let activities;
+                const mainTitle = sessionTitle.split(':')[1]?.split(' - ')[0].trim();
+                
+                switch (type) {
+                    case 'listening': activities = template.activities(lessonInfo); break;
+                    case 'grammar': activities = template.activities(mainTitle || 'الظاهرة اللغوية'); break;
+                    case 'speaking': activities = template.activities(lessonInfo.unit.name); break;
+                    case 'writing1': case 'writing2': activities = template.activities(getWritingTextType(lessonInfo) || 'النص المطلوب'); break;
+                    default: activities = template.activities(); break;
+                }
+                
+                activities.forEach((desc, i) => {
+                    const details = activityDetails[type]?.[i] || { time: '...', aids: '...' };
+                    plan.push({ stage: "أنشطة الحصة", activity: `النشاط ${i + 1}`, description: desc, type: 'نمذجة > م موجهة > م مستقلة', ...details, page: pageNumber });
+                });
+            } else {
+                 plan.push({ stage: "أنشطة الحصة", activity: 'النشاط 1', description: '...', type: 'نمذجة > م موجهة > م مستقلة', time: '...', aids: '...', page: pageNumber });
+            }
+
+            const closingActivities = [
+                { activity: 'التذكير بما تم تعلمه', description: 'مراجعة لأهم مراحل الدرس', type: '...', time: '3 دقائق', aids: 'السبورة' },
+                { activity: 'الواجب المنزلي', description: 'تمرين لتثبيت المكتسبات واستثمارها', type: 'ممارسة مستقلة', time: 'دقيقتان', aids: 'الدفاتر' }
+            ];
+            closingActivities.forEach(item => plan.push({ stage: "اختتام الحصة", ...item }));
+
+            return plan;
+        };
+        
+        const initializeApp = () => {
+            noteModalInstance = new bootstrap.Modal('#note-modal');
+            confirmationModalInstance = new bootstrap.Modal('#confirmationModal');
+            teacherInfoModalInstance = new bootstrap.Modal('#teacher-info-modal');
+            timetableModalInstance = new bootstrap.Modal('#timetable-modal');
+            upcomingLessonsModalInstance = new bootstrap.Modal('#upcoming-lessons-modal');
+
+            const darkModeSwitch = document.getElementById('darkModeSwitch'), isDarkMode = localStorage.getItem('darkMode') === 'true';
+            darkModeSwitch.checked = isDarkMode; document.body.classList.toggle('dark-mode', isDarkMode);
+            renderInstructionsPage(); 
+            addGlobalEventListeners();
+            document.querySelectorAll('.nav-link').forEach(link => link.addEventListener('click', (e) => { e.preventDefault(); switchPage(link.dataset.target); }));
+            document.getElementById('menu-toggle').addEventListener('click', () => document.getElementById('sidebar').classList.toggle('show'));
+            darkModeSwitch.addEventListener('change', () => {
+                document.body.classList.toggle('dark-mode', darkModeSwitch.checked);
+                localStorage.setItem('darkMode', darkModeSwitch.checked);
+                if (document.getElementById('page-stats').classList.contains('active')) renderStatisticsPage();
+                if (document.getElementById('page-journal').classList.contains('active')) renderJournal();
+                if (document.getElementById('page-cards').classList.contains('active')) displayCards();
+            });
+            const lastPage = localStorage.getItem('activePage');
+            const defaultPage = Object.keys(getDb('teacherSettings')).length === 0 ? 'page-instructions' : 'page-stats';
+            switchPage(lastPage && document.getElementById(lastPage) ? lastPage : defaultPage);
+            updateNotificationBell();
+            setupAutoUpdate();
+        };
+
+        initializeApp();
+    })();
+
+    // --- PWA Service Worker Registration ---
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').then(registration => {
+          console.log('ServiceWorker registration successful with scope: ', registration.scope);
+        }, err => {
+          console.log('ServiceWorker registration failed: ', err);
+        });
+      });
+    }
+    
+    // --- Mindmap Logic ---
+    (function() {
+        const mindMapData = {
+            year1: [
+                { name: "فهم المسموع (CO)", children: [
+                    { name: "الفهم المباشر (الحرفي)", children: [
+                        { name: "تذكر معلومات صريحة واسترجاعها", code: "C01", children: [
+                            { name: "أحدد عناصر الوضعية التواصلية في النص المسموع" },
+                            { name: "أسترجع معلومات صريحة وردت في النص المسموع" },
+                        ]}
+                    ]},
+                    { name: "الفهم الاستنتاجي (الضمني)", children: [
+                        { name: "دمج المعلومات المسترجعة وتفسيرها", code: "CO2", children: [
+                            { name: "أستنتج معاني ضمنية من النص المسموع" },
+                            { name: "أحدد بنية النص المسموع (الخطاطة النصية)" },
+                            { name: "أعيد صياغة مضمون النص المسموع بأسلوبي الخاص" },
+                        ]}
+                    ]},
+                    { name: "الفهم النقدي", children: [
+                        { name: "إبداء الرأي أو إصدار حكم بسيط", code: "CO3", children: [
+                            { name: "أقدم رأيي (حكم نقدي بسيط) في مضمون النص المسموع أو أسلوبه" }
+                        ]}
+                    ]}
+                ]},
+                { name: "التحدث (PO)", children: [
+                    { name: "التحدث في وضعيات تواصلية مختلفة", children: [
+                        { name: "التعبير عن تجربة شخصية", code: "PO1", children: [ { name: "أتحدث باسترسال لأجل الإخبار/السرد/الوصف (5 جمل على الأقل)" } ]},
+                        { name: "التعبير/الدفاع عن فكرة أو رأي", code: "PO2", children: [ { name: "أتحدث باسترسال للدفاع عن رأي أو معارضته أو تقديم إرشادات (5 جمل على الأقل)" } ]},
+                    ]},
+                    { name: "الإلقاء والتواصل المؤثر", children: [
+                        { name: "التحدث بدقة ووضوح", code: "PO3", children: [ { name: "أستخدم جملا مفيدة ومترابطة" }, { name: "أنوع الأساليب (الشرح، السرد، الوصف...)" } ]},
+                        { name: "التحدث أمام الزملاء بثقة ومهارة", code: "PO4", children: [ { name: "أتحدث بشكل جهري ومعبر (نبرة، إيقاع، تنغيم)" }, { name: "أستخدم لغة الجسد (التواصل غير اللفظي)" } ]}
+                    ]}
+                ]},
+                { name: "القراءة بطلاقة (LF)", children: [
+                    { name: "القراءة السليمة للكلمات والجمل", children: [
+                        { name: "تحقيق الطلاقة اللفظية (الدقة)", code: "LF1", children: [ { name: "أقرأ 5 كلمات و 5 جمل على الأقل بشكل سليم" } ]},
+                        { name: "تحقيق الطلاقة الزمنية (السرعة)", code: "LF2", children: [ { name: "أقرأ فقرة قصيرة بسرعة مناسبة غير مخلة بالفهم" } ]},
+                    ]},
+                    { name: "القراءة المعبرة", children: [
+                        { name: "تحقيق الطلاقة التعبيرية (الإيقاع والتعبير)", code: "LF3", children: [ { name: "أقرأ فقرة قصيرة بنغمة صوتية وإيقاع يعكسان المعنى" } ]}
+                    ]}
+                ]},
+                { name: "فهم المقروء (CE)", children: [
+                    { name: "الفهم المباشر", children: [
+                        { name: "استثمار العتبات النصية", code: "CE1", children: [
+                            { name: "أنجز بطاقة تعريف للنص: جنسه ومصدره وزمن إنتاجه" },
+                            { name: "أحدد عناصر الوضعية التواصلية: من يتحدث، لمن، لماذا" }
+                        ]},
+                        { name: "التعرف والاستخراج", code: "CE2", children: [ 
+                            { name: "أتعرف المعجم (مرادفات، أضداد...)" }, 
+                            { name: "أستخرج معلومات صريحة ومحددة" },
+                            { name: "أتتبع تسلسل الأفكار أو الأحداث داخل النص" }
+                        ]}
+                    ]},
+                    { name: "الفهم الضمني", children: [
+                        { name: "الاستدلال", code: "CE3", children: [ 
+                            { name: "أستنتج الأفكار الرئيسة في النص" }, 
+                            { name: "أستنتج معلومات غير مصرح بها (المكان، الزمان، الأسباب...)" },
+                            { name: "أستنتج مشاعر الشخصيات ومواقفها وعلاقاتها وخصائصها" },
+                            { name: "أفسر الظواهر والأطروحات والحجج والأوصاف والأسباب والنتائج" },
+                            { name: "ألخص مضمون النص بالتركيز على أفكاره الرئيسية" }
+                        ]},
+                        { name: "التنظيم", code: "CE4", children: [ { name: "أميز عناصر النص حسب نوعيته" }, { name: "أحدد عناصر البنية النصية الأساسية" } ] },
+                        { name: "التحليل", code: "CE5", children: [ {name:"أحدد الأساليب المستعملة ووظيفتها"}, {name:"أحلل المعطيات والأدلة"} ]}
+                    ]},
+                    { name: "الفهم النقدي والإبداعي", children: [
+                        { name: "النقد", code: "CE6", children: [ {name:"أبدي رأيي في أفكار النص ومضمونه"}, {name:"أبدي رأيي في اختيارات الكاتب الأسلوبية واللغوية"} ]},
+                        { name: "الاستثمار", code: "CE7", children: [ {name:"أقترح نهاية بديلة للحكاية"}, {name:"أقدم وجهة نظر مخالفة"} ]}
+                    ]}
+                ]},
+                { name: "الإنتاج الكتابي (PE)", children: [
+                   { name: "إنتاج جمل تامة المبنى والمعنى", children: [
+                       { name: "توظيف الظواهر اللغوية", code: "PE1", children: [{name: "أنتج جملا تامة المبنى والمعنى (3 جمل)"}] },
+                       { name: "توظيف أفعال الكلام", code: "PE2", children: [{name: "أوظف أفعال الكلام المناسبة (3 جمل)"}] },
+                   ]},
+                   { name: "إنتاج نص منسجم", children: [
+                       { name: 'إنتاج نص "تعبيري"', code: "PE3", children: [{name: "أنتج نصا سرديا أو وصفيا بسيطا (حوالي 8 أسطر)"}] },
+                       { name: 'إنتاج نص "وظيفي"', code: "PE4", children: [{name: "أنتج نصا إخباريا أو توجيهيا (حوالي 8 أسطر)"}] },
+                   ]}
+                ]}
+            ],
+            year2: [
+                { name: "فهم المسموع (CO)", children: [
+                    { name: "الفهم المباشر (الحرفي)", children: [
+                        { name: "تذكر معلومات صريحة", code: "CO1", children: [{ name: "أحدد عناصر الوضعية التواصلية" }, { name: "أسترجع معلومات صريحة" }] }
+                    ]},
+                    { name: "الفهم الاستنتاجي (الضمني)", children: [
+                        { name: "دمج المعلومات وتفسيرها", code: "CO2", children: [{ name: "أستنتج معاني ضمنية" }, { name: "أحدد بنية النص المسموع" }, { name: "أعيد صياغة المضمون" }] }
+                    ]},
+                    { name: "الفهم النقدي", children: [
+                        { name: "إبداء الرأي", code: "CO3", children: [{ name: "أقدم رأيي (حكم نقدي بسيط)" }] }
+                    ]}
+                ]},
+                { name: "التحدث (PO)", children: [
+                     { name: "التحدث في وضعيات تواصلية مختلفة", children: [
+                        { name: "التعبير عن تجربة", code: "PO1" , children: [{ name: "أتحدث باسترسال لأجل الإخبار/السرد/الوصف (7 جمل على الأقل)" }] },
+                        { name: "التعبير/الدفاع عن فكرة", code: "PO2" , children: [{ name: "أتحدث باسترسال للدفاع عن رأي أو تقديم إرشادات (7 جمل على الأقل)" }] },
+                    ]},
+                     { name: "الإلقاء والتواصل المؤثر", children: [
+                        { name: "التحدث بدقة ووضوح", code: "PO3" , children: [{ name: "أستخدم جملا مفيدة ومترابطة" }, { name: "أنوع الأساليب" }] },
+                        { name: "التحدث أمام الزملاء بثقة", code: "PO4" , children: [{ name: "أتحدث بشكل جهري ومعبر" }, { name: "أستخدم لغة الجسد" }] }
+                    ]}
+                ]},
+                { name: "القراءة بطلاقة (LF)", children: [
+                     { name: "القراءة السليمة للكلمات والجمل", children: [
+                        { name: "الطلاقة اللفظية (الدقة)", code: "LF1", children: [{ name: "أقرأ 7 كلمات و 7 جمل على الأقل بشكل سليم" }] },
+                        { name: "الطلاقة الزمنية (السرعة)", code: "LF2", children: [{ name: "أقرأ فقرة متوسطة بسرعة مناسبة" }] },
+                    ]},
+                     { name: "القراءة المعبرة", children: [
+                        { name: "الطلاقة التعبيرية", code: "LF3", children: [{ name: "أقرأ فقرة متوسطة بنغمة صوتية وإيقاع يعكسان المعنى" }] }
+                    ]}
+                ]},
+                { name: "فهم المقروء (CE)", children: [
+                    { name: "الفهم المباشر", children: [
+                        { name: "استثمار العتبات النصية", code: "CE1", children: [ {name: "أنجز بطاقة تعريف للنص: جنسه ومصدره وزمن إنتاجه"}, {name: "أحدد عناصر وضعيته التواصلية"}] },
+                        { name: "التعرف والاستخراج", code: "CE2", children: [
+                            { name: "أتعرف المعجم وأفعال الكلام" }, 
+                            { name: "أستخرج معلومات صريحة" },
+                            { name: "أتتبع تسلسل الأفكار أو الأحداث داخل النص" }
+                        ]}
+                    ]},
+                    { name: "الفهم الضمني (الاستنتاجي)", children: [
+                        { name: "الاستدلال", code: "CE3", children: [
+                            { name: "أستنتج الأفكار الرئيسة" }, 
+                            { name: "أستنتج معلومات غير مصرح بها" }, 
+                            { name: "أستنتج مشاعر الشخصيات ومواقفها وخصائصها ووظائفها" },
+                            { name: "أفسر الظواهر والأطروحات والحجج والأسباب والنتائج" },
+                            { name: "ألخص مضمون النص" }, 
+                            { name: "أستنتج مغزى النص أو العبرة منه" }
+                        ]},
+                        { name: "التنظيم", code: "CE4", children: [
+                            { name: "أميز عناصر النص حسب نوعيته (سرد، حوار، حجاج...)" }, 
+                            { name: "أحدد عناصر البنية النصية الأساسية" },
+                            { name: "أميز الاستراتيجيات المتبعة في عرض مضمون النص" }
+                        ]},
+                        { name: "التحليل", code: "CE5", children: [ { name: "أحدد الأساليب المستعملة ووظيفتها" }, { name: "أحلل مصادر المعلومات" } ]}
+                    ]},
+                    { name: "الفهم النقدي والإبداعي", children: [
+                        { name: "النقد", code: "CE6", children: [{name:"أبدي رأيي في أفكار النص واختيارات الكاتب الأسلوبية واللغوية"}] },
+                        { name: "الاستثمار", code: "CE7", children: [ { name:"أقترح نهاية بديلة"}, { name:"أقدم وجهة نظر مخالفة"}, { name:"أبدي رأيي في مدى واقعية التوصيات أو المقترحات"} ]}
+                    ]}
+                ]},
+                { name: "الإنتاج الكتابي (PE)", children: [
+                     { name: "إنتاج جمل تامة المبنى والمعنى", children: [
+                       { name: "توظيف الظواهر اللغوية", code: "PE1", children: [{name: "أنتج جملا تامة المبنى والمعنى (4 جمل)"}] },
+                       { name: "توظيف أفعال الكلام", code: "PE2", children: [{name: "أوظف أفعال الكلام المناسبة (4 جمل)"}] },
+                    ]},
+                     { name: "إنتاج نص منسجم", children: [
+                       { name: 'إنتاج نص "تعبيري"', code: "PE3", children: [{name: "أنتج نصا سرديا أو حواريا أو وصفيا (حوالي 10 أسطر)"}] },
+                       { name: 'إنتاج نص "وظيفي"', code: "PE4", children: [{name: "أنتج نصا تفسيريا أو حجاجيا (حوالي 10 أسطر)"}] },
+                    ]}
+                ]}
+            ],
+            year3: [
+                { name: "فهم المسموع (CO)", children: [
+                    { name: "الفهم المباشر (الحرفي)", children: [
+                        { name: "تذكر معلومات صريحة", code: "CO1", children: [{ name: "أحدد عناصر الوضعية التواصلية" }, { name: "أسترجع معلومات صريحة" }] }
+                    ]},
+                    { name: "الفهم الاستنتاجي (الضمني)", children: [
+                        { name: "دمج المعلومات وتفسيرها", code: "CO2", children: [{ name: "أستنتج معاني ضمنية" }, { name: "أحدد بنية النص المسموع" }, { name: "أعيد صياغة المضمون" }] }
+                    ]},
+                    { name: "الفهم النقدي", children: [
+                        { name: "إبداء الرأي", code: "CO3", children: [{ name: "أقدم رأيي (حكم نقدي بسيط)" }] }
+                    ]}
+                ]},
+                { name: "التحدث (PO)", children: [
+                    { name: "التحدث في وضعيات تواصلية مختلفة", children: [
+                        { name: "التعبير عن تجربة", code: "PO1", children: [{ name: "أتحدث باسترسال لأجل الإخبار/السرد/الوصف (10 جمل على الأقل)" }] },
+                        { name: "التعبير/الدفاع عن فكرة", code: "PO2", children: [{ name: "أتحدث باسترسال للدفاع عن رأي أو تقديم إرشادات (10 جمل على الأقل)" }] },
+                    ]},
+                    { name: "الإلقاء والتواصل المؤثر", children: [
+                        { name: "التحدث بدقة ووضوح", code: "PO3", children: [{ name: "أستخدم جملا مفيدة ومترابطة" }, { name: "أنوع الأساليب" }] },
+                        { name: "التحدث أمام الزملاء بثقة", code: "PO4", children: [{ name: "أتحدث بشكل جهري ومعبر" }, { name: "أستخدم لغة الجسد" }] }
+                    ]}
+                ]},
+                { name: "القراءة بطلاقة (LF)", children: [
+                     { name: "القراءة السليمة للكلمات والجمل", children: [
+                        { name: "الطلاقة اللفظية (الدقة)", code: "LF1", children: [{ name: "أقرأ 10 كلمات و 10 جمل على الأقل بشكل سليم" }] },
+                        { name: "الطلاقة الزمنية (السرعة)", code: "LF2", children: [{ name: "أقرأ فقرة طويلة بسرعة مناسبة" }] },
+                    ]},
+                     { name: "القراءة المعبرة", children: [
+                        { name: "الطلاقة التعبيرية", code: "LF3", children: [{ name: "أقرأ فقرة طويلة بنغمة صوتية وإيقاع يعكسان المعنى" }] }
+                    ]}
+                ]},
+                { name: "فهم المقروء (CE)", children: [
+                     { name: "الفهم المباشر", children: [
+                        { name: "استثمار العتبات النصية", code: "CE1", children: [
+                            { name: "أنجز بطاقة تعريف للنص: جنسه ومصدره وزمن إنتاجه" },
+                            { name: "أحدد عناصر الوضعية التواصلية" }
+                        ]},
+                        { name: "التعرف والاستخراج", code: "CE2", children: [
+                            { name: "أتعرف المعجم وأفعال الكلام" }, 
+                            { name: "أستخرج معلومات صريحة" },
+                            { name: "أتتبع تسلسل الأفكار أو الأحداث داخل النص" }
+                        ]}
+                    ]},
+                    { name: "الفهم الضمني", children: [
+                        { name: "الاستدلال", code: "CE3", children: [
+                            { name: "أستنتج الأفكار الرئيسة" }, 
+                            { name: "أستنتج معلومات غير مصرح بها" }, 
+                            { name: "أستنتج مشاعر الشخصيات ومواقفها وخصائصها ووظائفها" },
+                            { name: "أفسر الظواهر والأطروحات والحجج والأسباب والنتائج" },
+                            { name: "ألخص مضمون النص" }, 
+                            { name: "أستنتج مغزى النص أو العبرة منه" }
+                        ]},
+                        { name: "التنظيم", code: "CE4", children: [
+                            { name: "أميز عناصر النص حسب نوعيته" }, 
+                            { name: "أحدد عناصر البنية النصية الأساسية" }, 
+                            { name: "أميز الاستراتيجيات المتبعة في العرض" }
+                        ]},
+                        { name: "التحليل", code: "CE5", children: [ 
+                            { name: "أحدد الأساليب المستعملة ووظيفتها" }, 
+                            { name: "أحدد الاختيارات اللغوية والأسلوبية" }, 
+                            { name: "أحلل مصادر المعلومات وأحلل المعطيات والأدلة" } 
+                        ]}
+                    ]},
+                    { name: "الفهم النقدي والإبداعي", children: [
+                        { name: "النقد", code: "CE6", children: [ 
+                            {name:"أبدي رأيي في أفكار النص وتصرفات الشخصيات"}, 
+                            {name:"أبدي رأيي في اختيارات الكاتب الأسلوبية واللغوية"}, 
+                            {name:"أقيم مصداقية المعلومات أو الأدلة"}, 
+                            {name:"أبدي رأيي في مدى واقعية التوصيات"} 
+                        ]},
+                        { name: "الاستثمار", code: "CE7", children: [ { name:"أقترح نهاية بديلة"}, { name:"أقدم وجهة نظر مخالفة"}, { name:"أعيد كتابة مقطع من النص"} ]}
+                    ]}
+                ]},
+                 { name: "الإنتاج الكتابي (PE)", children: [
+                     { name: "إنتاج جمل تامة المبنى والمعنى", children: [
+                        { name: "توظيف الظواهر اللغوية", code: "PE1", children: [{name: "أنتج جملا تامة المبنى والمعنى (4 جمل)"}] },
+                        { name: "توظيف أفعال الكلام", code: "PE2", children: [{name: "أوظف أفعال الكلام المناسبة (4 جمل)"}] },
+                    ]},
+                     { name: "إنتاج نص منسجم", children: [
+                        { name: 'إنتاج نص "تعبيري"', code: "PE3", children: [{name: "أنتج نصا سرديا بسيطا (حوالي 12 سطرا)"}] },
+                        { name: 'إنتاج نص "وظيفي"', code: "PE4", children: [{name: "أنتج نصا إخباريا أو تفسيريا أو حجاجيا (حوالي 12 سطرا)"}] },
+                    ]}
+                ]}
+            ]
+        };
+
+        const yearTitles = {
+            year1: "بالسنة الأولى إعدادي",
+            year2: "بالسنة الثانية إعدادي",
+            year3: "بالسنة الثالثة إعدادي"
+        };
+
+        const container = document.getElementById('mindmap-container-main');
+        const buttons = {
+            year1: document.getElementById('btnMindmapYear1'),
+            year2: document.getElementById('btnMindmapYear2'),
+            year3: document.getElementById('btnMindmapYear3'),
+        };
+
+        function createNode(item, level) {
+            const li = document.createElement('li');
+            li.className = `level-${level}`;
+            if (level > 1) li.classList.add('has-siblings');
+
+            const nodeDiv = document.createElement('div');
+            nodeDiv.className = 'node';
+            
+            let content = '';
+            if (level === 1) {
+                content = `<div class="root-title-wrapper"><span class="main-title">${item.name}</span><span class="year-subtitle">${item.subtitle}</span></div>`;
+            } else {
+                if (item.code) content += `<span class="code">${item.code}</span>`;
+                content += `<span>${item.name}</span>`;
+            }
+            
+            if (item.children && item.children.length > 0) {
+                li.classList.add('collapsible', 'collapsed');
+                const toggle = document.createElement('span');
+                toggle.className = 'toggle-icon';
+                toggle.textContent = '+';
+                nodeDiv.appendChild(toggle);
+            }
+            
+            nodeDiv.insertAdjacentHTML('beforeend', content);
+            li.appendChild(nodeDiv);
+
+            if (item.children && item.children.length > 0) {
+                const ul = document.createElement('ul');
+                item.children.forEach(child => ul.appendChild(createNode(child, level + 1)));
+                li.appendChild(ul);
+            }
+            return li;
+        }
+
+        function renderMindMap(data, yearTitle) {
+            if (!container) return; 
+            container.innerHTML = '';
+            const rootUl = document.createElement('ul');
+            rootUl.className = 'mindmap';
+            const centerNode = { name: "كفايات اللغة العربية", subtitle: yearTitle, children: data };
+            rootUl.appendChild(createNode(centerNode, 1));
+            container.appendChild(rootUl);
+        }
+
+        function handleYearChange(yearKey) {
+            renderMindMap(mindMapData[yearKey], yearTitles[yearKey]);
+            for (const key in buttons) {
+                if (buttons[key]) buttons[key].classList.remove('active');
+            }
+            if (buttons[yearKey]) buttons[yearKey].classList.add('active');
+        }
+
+        for (const key in buttons) {
+            if (buttons[key]) {
+                buttons[key].addEventListener('click', () => handleYearChange(key));
+            }
+        }
+        
+        if (container) {
+            container.addEventListener('click', (event) => {
+                const nodeEl = event.target.closest('.node');
+                if (nodeEl && nodeEl.parentElement.classList.contains('collapsible')) {
+                    const li = nodeEl.parentElement;
+                    li.classList.toggle('collapsed');
+                    const toggle = nodeEl.querySelector('.toggle-icon');
+                    if (toggle) toggle.textContent = li.classList.contains('collapsed') ? '+' : '−';
+                }
+            });
+            handleYearChange('year1');
+        }
+    })();
+
+
+    </script>
+</body>
+</html>
