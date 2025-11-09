@@ -355,35 +355,14 @@
 
 
 
-/* 1. اجعل الترويسة مدمجة قدر الإمكان */
-    body.printing-journal .journal-print-header {
-        display: flex !important;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0 0 5px 0 !important; /* تقليل المساحة الداخلية */
-        margin-bottom: 4mm !important;    /* تقليل المسافة بعدها */
-        border-bottom: 1px solid #ccc !important;
+    .journal-print-header {
+        display: none !important;
     }
 
-    /* 2. تصغير حجم الشعار في الترويسة */
-    body.printing-journal .journal-print-header img {
-        width: 15px !important;
-        height: 15px !important;
-        margin: 0 !important;
-    }
-
-    /* 3. تصغير حجم الخط في الترويسة */
-    body.printing-journal .journal-print-header .header-center,
-    body.printing-journal .journal-print-header .header-left {
-        font-size: 10pt !important;
-        font-weight: bold;
-        margin: 0;
-    }
-
-    /* 4. تقليص بسيط إضافي للمساحة داخل كل الخلايا كإجراء احترازي */
-    body.printing-journal #journal-table th, 
-    body.printing-journal #journal-table td {
-        padding: 3px !important;
+    /* === أضف هذه القاعدة الجديدة لإزالة المساحة الشبحية === */
+    body.printing-journal .journal-table-container {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
     }
 
 
