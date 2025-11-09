@@ -348,6 +348,11 @@
 
         @media print {
             /* === START: PROFESSIONAL PRINT STYLESHEET (v35 - Final) === */
+
+.journal-print-header {
+        display: none !important;
+    }
+            
             @page { size: A4 portrait; margin: 0.7cm 0.4cm; }
             body { -webkit-print-color-adjust: exact !important; color-adjust: exact !important; font-size: 10pt; background: #fff !important; color: #000 !important; overflow: visible !important; }
             .sidebar, .menu-toggle, .page:not(.active), .page-header:not(.print-header), #print-journal-btn, #print-cards-btn, .footer-text, .edit-btn, #journal-card > *:not(.printable-area), #page-cards .card, .lesson-structure-table thead tr:nth-child(2), .journal-print-header { display: none !important; }
@@ -356,15 +361,6 @@
             .printable-area, #cards-display { display: block !important; border: none !important; box-shadow: none !important; padding: 0 !important; margin: 0 !important; width: 100% !important; overflow: visible !important; }
             * { color: #000 !important; background-color: transparent !important; }
             body.printing-journal .print-header { display: none !important; }
-
-
-.journal-print-header {
-        display: none !important;
-    }
-
-
-
-
             body.printing-journal #journal-table { width: 100% !important; min-width: 0 !important; border-collapse: collapse !important; table-layout: fixed !important; font-size: 9pt; }
             body.printing-journal #journal-table > thead { display: table-header-group !important; }
             body.printing-journal #journal-table tbody, body.printing-journal #journal-table tr { display: revert !important; }
