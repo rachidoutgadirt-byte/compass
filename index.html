@@ -8,6 +8,19 @@
     <!-- PWA Manifest Link -->
     <link rel="manifest" href="manifest.json">
 
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').then(registration => {
+        console.log('SW registered: ', registration);
+      }).catch(registrationError => {
+        console.log('SW registration failed: ', registrationError);
+      });
+    });
+  }
+</script>
+
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -427,6 +440,15 @@ tr.journal-entry, tr.signature-row {
 </head>
 <body>
 
+<!-- Add this before the closing </body> tag -->
+<div id="update-notification" class="position-fixed bottom-0 start-50 translate-middle-x p-3" style="z-index: 1060; display: none;">
+    <div class="alert alert-info shadow-lg d-flex align-items-center justify-content-between mb-0" role="alert">
+        <div>يوجد تحديث جديد للتطبيق.</div>
+        <button id="update-app-btn" class="btn btn-primary btn-sm ms-3">تحديث الآن</button>
+    </div>
+</div>
+
+
     <div class="dashboard-container">
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
@@ -569,6 +591,8 @@ tr.journal-entry, tr.signature-row {
         </main>
     </div>
 
+
+
     <!-- Modals -->
     <div class="toast-container position-fixed bottom-0 start-50 translate-middle-x p-3"></div>
     <div class="modal fade" id="note-modal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="modal-title">إضافة / تعديل</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea id="note-textarea" class="form-control" rows="8"></textarea></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button><button type="button" id="save-note-btn" class="btn btn-primary">حفظ</button></div></div></div></div>
@@ -630,16 +654,51 @@ const _0x3767b3=_0x21d2;(function(_0x6362e3,_0x41ded0){const _0x21aed8=_0x21d2,_
 
 
 
-// --- PWA Service Worker Registration ---
+
+let newWorker; // متغير للاحتفاظ بعامل الخدمة الجديد
+
+function showUpdateBar() {
+  const updateNotification = document.getElementById('update-notification');
+  if (updateNotification) {
+    updateNotification.style.display = 'block';
+  }
+}
+
+// ابحث عن تسجيل عامل الخدمة الحالي
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js').then(registration => {
-      console.log('ServiceWorker registration successful with scope: ', registration.scope);
-    }, err => {
-      console.log('ServiceWorker registration failed: ', err);
+  navigator.serviceWorker.ready.then(registration => {
+    // 1. اكتشاف وجود عامل خدمة جديد في الانتظار
+    if (registration.waiting) {
+      newWorker = registration.waiting;
+      showUpdateBar();
+      return;
+    }
+
+    // 2. تتبع التحديثات القادمة
+    registration.addEventListener('updatefound', () => {
+      newWorker = registration.installing;
+      newWorker.addEventListener('statechange', () => {
+        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+          // عندما يصبح العامل الجديد جاهزًا، أظهر شريط التحديث
+          showUpdateBar();
+        }
+      });
     });
   });
 }
+
+// 3. عند النقر على زر التحديث
+document.getElementById('update-app-btn').addEventListener('click', () => {
+  if (newWorker) {
+    newWorker.postMessage({ type: 'SKIP_WAITING' });
+  }
+});
+
+// 4. إعادة تحميل الصفحة بعد تفعيل العامل الجديد
+navigator.serviceWorker.addEventListener('controllerchange', () => {
+  window.location.reload();
+});
+
 
 
     </script>
