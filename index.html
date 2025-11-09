@@ -352,6 +352,43 @@
 .journal-print-header {
         display: none !important;
     }
+
+
+
+/* 1. اجعل الترويسة مدمجة قدر الإمكان */
+    body.printing-journal .journal-print-header {
+        display: flex !important;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 0 5px 0 !important; /* تقليل المساحة الداخلية */
+        margin-bottom: 4mm !important;    /* تقليل المسافة بعدها */
+        border-bottom: 1px solid #ccc !important;
+    }
+
+    /* 2. تصغير حجم الشعار في الترويسة */
+    body.printing-journal .journal-print-header img {
+        width: 30px !important;
+        height: 30px !important;
+        margin: 0 !important;
+    }
+
+    /* 3. تصغير حجم الخط في الترويسة */
+    body.printing-journal .journal-print-header .header-center,
+    body.printing-journal .journal-print-header .header-left {
+        font-size: 10pt !important;
+        font-weight: bold;
+        margin: 0;
+    }
+
+    /* 4. تقليص بسيط إضافي للمساحة داخل كل الخلايا كإجراء احترازي */
+    body.printing-journal #journal-table th, 
+    body.printing-journal #journal-table td {
+        padding: 3px !important;
+    }
+
+
+
+            
             
             @page { size: A4 portrait; margin: 0.7cm 0.4cm; }
             body { -webkit-print-color-adjust: exact !important; color-adjust: exact !important; font-size: 10pt; background: #fff !important; color: #000 !important; overflow: visible !important; }
