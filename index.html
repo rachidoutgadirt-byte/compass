@@ -15,7 +15,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
 
-    <style>
+
+
+<style>
         :root {
             --primary-color: #20A4F3;
             --sidebar-bg: #0D2B45;
@@ -344,52 +346,111 @@
         #page-mindmap .root-title-wrapper .year-subtitle { font-size: 0.7em; opacity: 0.85; margin-top: 4px; font-weight: normal; }
         /* === MINDMAP STYLES END === */
 
-        .print-header, .print-signature-footer, .journal-print-header { display: none; }
+        .print-header, .print-signature-footer { display: none; }
 
         @media print {
-            /* === START: PROFESSIONAL PRINT STYLESHEET (v35 - Final) === */
-
-.journal-print-header {
-        display: none !important;
-    }
-
-
-
-    .journal-print-header {
-        display: none !important;
-    }
-
-    /* === أضف هذه القاعدة الجديدة لإزالة المساحة الشبحية === */
-    body.printing-journal .journal-table-container {
-        margin-top: 0 !important;
-        padding-top: 0 !important;
-    }
-
-
-
+            /* === START: PROFESSIONAL PRINT STYLESHEET (v35 - Final - MODIFIED) === */
             
-            
-            @page { size: A4 portrait; margin: 0.7cm 0.4cm; }
-            body { -webkit-print-color-adjust: exact !important; color-adjust: exact !important; font-size: 10pt; background: #fff !important; color: #000 !important; overflow: visible !important; }
-            .sidebar, .menu-toggle, .page:not(.active), .page-header:not(.print-header), #print-journal-btn, #print-cards-btn, .footer-text, .edit-btn, #journal-card > *:not(.printable-area), #page-cards .card, .lesson-structure-table thead tr:nth-child(2), .journal-print-header { display: none !important; }
-            body.printing-cards::before, body.printing-journal::before { content: ''; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 70%; height: 70%; background-image: url('https://i.ibb.co/0ps8mJYR/Explicit-teaching-logo5.webp'); background-size: contain; background-repeat: no-repeat; opacity: 0.08; z-index: -1; }
-            #journal-card, #page-cards { padding: 0 !important; border: none !important; box-shadow: none !important; }
-            .printable-area, #cards-display { display: block !important; border: none !important; box-shadow: none !important; padding: 0 !important; margin: 0 !important; width: 100% !important; overflow: visible !important; }
-            * { color: #000 !important; background-color: transparent !important; }
-            body.printing-journal .print-header { display: none !important; }
-            body.printing-journal #journal-table { width: 100% !important; min-width: 0 !important; border-collapse: collapse !important; table-layout: fixed !important; font-size: 9pt; }
-            body.printing-journal #journal-table > thead { display: table-header-group !important; }
-            body.printing-journal #journal-table tbody, body.printing-journal #journal-table tr { display: revert !important; }
-            body.printing-journal #journal-table th, body.printing-journal #journal-table td { display: table-cell !important; border: 1px solid #999 !important; padding: 4px !important; vertical-align: middle !important; text-align: right !important; word-wrap: break-word; }
+            @page { 
+                size: A4 portrait; 
+                margin: 0.7cm 0.4cm; 
+            }
+            body { 
+                -webkit-print-color-adjust: exact !important; 
+                color-adjust: exact !important; 
+                font-size: 10pt; 
+                background: #fff !important; 
+                color: #000 !important; 
+                overflow: visible !important; 
+            }
+            .sidebar, .menu-toggle, .page:not(.active), .page-header:not(.print-header), #print-journal-btn, #print-cards-btn, .footer-text, .edit-btn, #journal-card > *:not(.printable-area), #page-cards .card, .lesson-structure-table thead tr:nth-child(2) { 
+                display: none !important; 
+            }
+            .journal-print-header {
+                display: none !important; /* <<-- 1. التأكد من إخفاء الترويسة */
+            }
+            body.printing-cards::before, body.printing-journal::before { 
+                content: ''; 
+                position: fixed; 
+                top: 50%; 
+                left: 50%; 
+                transform: translate(-50%, -50%); 
+                width: 70%; 
+                height: 70%; 
+                background-image: url('https://i.ibb.co/0ps8mJYR/Explicit-teaching-logo5.webp'); 
+                background-size: contain; 
+                background-repeat: no-repeat; 
+                opacity: 0.08; 
+                z-index: -1; 
+            }
+            #journal-card, #page-cards { 
+                padding: 0 !important; 
+                border: none !important; 
+                box-shadow: none !important; 
+            }
+            .printable-area, #cards-display { 
+                display: block !important; 
+                border: none !important; 
+                box-shadow: none !important; 
+                padding: 0 !important; 
+                margin: 0 !important; 
+                width: 100% !important; 
+                overflow: visible !important; 
+            }
+            * { 
+                color: #000 !important; 
+                background-color: transparent !important; 
+            }
+            body.printing-journal .print-header { 
+                display: none !important; 
+            }
+            body.printing-journal .journal-table-container {
+                margin-top: 0 !important; /* <<-- 2. إزالة المساحة العلوية من حاوية الجدول */
+                padding-top: 0 !important;
+            }
+            body.printing-journal #journal-table { 
+                width: 100% !important; 
+                min-width: 0 !important; 
+                border-collapse: collapse !important; 
+                table-layout: fixed !important; 
+                font-size: 9pt; 
+            }
+            body.printing-journal #journal-table > thead { 
+                display: table-header-group !important; 
+            }
+            body.printing-journal #journal-table tbody, body.printing-journal #journal-table tr { 
+                display: revert !important; 
+            }
+            body.printing-journal #journal-table th, body.printing-journal #journal-table td { 
+                display: table-cell !important; 
+                border: 1px solid #999 !important; 
+                padding: 4px !important; 
+                vertical-align: middle !important; 
+                text-align: right !important; 
+                word-wrap: break-word;
+                line-height: 1.2 !important; /* تحسين صغير لارتفاع السطر */
+            }
             body.printing-journal #journal-table .journal-cell.cell-class,
-            body.printing-journal #journal-table .journal-cell.cell-date { text-align: center !important; }
+            body.printing-journal #journal-table .journal-cell.cell-date { 
+                text-align: center !important; 
+            }
 
             body.printing-journal #journal-table > * > tr > *:nth-child(1) { width: 10% !important; text-align: center !important; }
             body.printing-journal #journal-table > * > tr > *:nth-child(2) { width: 68% !important; }
             body.printing-journal #journal-table > * > tr > *:nth-child(3) { width: 10% !important; text-align: center !important; }
             body.printing-journal #journal-table > * > tr > *:nth-child(4) { width: 12% !important; }
-            body.printing-journal #journal-table > thead > tr > th { background: linear-gradient(90deg, #0D2B45, #20A4F3) !important; color: white !important; font-weight: bold; text-align: center !important; vertical-align: middle; border: 1px solid #0D2B45 !important; }
-            body.printing-journal .lesson-main-info .lesson-title, body.printing-journal #journal-table .lesson-print-meta { text-align: center !important; vertical-align: middle !important; }
+            body.printing-journal #journal-table > thead > tr > th { 
+                background: linear-gradient(90deg, #0D2B45, #20A4F3) !important; 
+                color: white !important; 
+                font-weight: bold; 
+                text-align: center !important; 
+                vertical-align: middle; 
+                border: 1px solid #0D2B45 !important; 
+            }
+            body.printing-journal .lesson-main-info .lesson-title, body.printing-journal #journal-table .lesson-print-meta { 
+                text-align: center !important; 
+                vertical-align: middle !important; 
+            }
             
             body.printing-journal #journal-table .lesson-structure-table thead th {
                  text-align: center !important;
@@ -402,10 +463,24 @@
                  text-align: center !important;
             }
 
-            body.printing-journal .journal-cell.cell-class.level-color-1 { color: #007bff !important; } body.printing-journal .journal-cell.cell-class.level-color-2 { color: #28a745 !important; } body.printing-journal .journal-cell.cell-class.level-color-3 { color: #dc3545 !important; }
-            body.printing-journal .lesson-structure-container { border: 1px solid #ccc !important; }
-            body.printing-journal #journal-table .lesson-print-meta { -webkit-print-color-adjust: exact !important; color-adjust: exact !important; }
-            body.printing-journal .lesson-structure-table th, body.printing-journal .lesson-structure-table td { border: 1px solid #ccc !important; }
+            body.printing-journal .journal-cell.cell-class.level-color-1 { color: #007bff !important; } 
+            body.printing-journal .journal-cell.cell-class.level-color-2 { color: #28a745 !important; } 
+            body.printing-journal .journal-cell.cell-class.level-color-3 { color: #dc3545 !important; }
+            
+            body.printing-journal .lesson-structure-container { 
+                border: 1px solid #ccc !important; 
+            }
+            body.printing-journal #journal-table .lesson-print-meta { 
+                -webkit-print-color-adjust: exact !important; 
+                color-adjust: exact !important; 
+            }
+            body.printing-journal .lesson-structure-table th, 
+            body.printing-journal .lesson-structure-table td { 
+                border: 1px solid #ccc !important; 
+            }
+            body.printing-journal .lesson-structure-table td {
+                padding-bottom: 4px !important; /* <<-- 3. إزالة المساحة السفلية الزائدة من خلايا الجدول الداخلي */
+            }
             body.printing-journal .lesson-structure-table td:nth-child(1) ol li,
             body.printing-journal .lesson-structure-table td:nth-child(3) ol li {
                 white-space: nowrap !important;
@@ -418,35 +493,96 @@
             body.printing-journal .lesson-structure-table > * > tr > *:nth-child(1) { width: auto !important; white-space: nowrap !important; } 
             body.printing-journal .lesson-structure-table > * > tr > *:nth-child(2) { width: 100% !important; white-space: normal !important; } 
             body.printing-journal .lesson-structure-table > * > tr > *:nth-child(3) { width: auto !important; white-space: nowrap !important; }
-
-
-
-    body.printing-journal .lesson-structure-table td {
-        padding-bottom: 4px !important; 
-    }
-
-
-
-            body.printing-journal #journal-table .lesson-print-meta.unit-color-1 { background-color: #eaf7ff !important; } body.printing-journal #journal-table .lesson-print-meta.unit-color-2 { background-color: #eafceb !important; } body.printing-journal #journal-table .lesson-print-meta.unit-color-3 { background-color: #fff8e8 !important; } body.printing-journal #journal-table .lesson-print-meta.unit-color-4 { background-color: #f3eaff !important; } body.printing-journal #journal-table .lesson-print-meta.unit-color-5 { background-color: #fff3e0 !important; } body.printing-journal #journal-table .lesson-print-meta.unit-color-6 { background-color: #fcecf4 !important; } body.printing-journal #journal-table .lesson-print-meta.unit-color-7 { background-color: #e7f9fc !important; } body.printing-journal #journal-table .lesson-print-meta.unit-color-8 { background-color: #f0ebff !important; } body.printing-journal #journal-table .lesson-print-meta.unit-color-9 { background-color: #fff3e0 !important; } body.printing-journal #journal-table .lesson-print-meta.unit-color-10 { background-color: #e9f9f4 !important; }
-            .print-signature-footer { display: flex !important; justify-content: space-between; font-weight: bold; font-size: 0.9em; padding-top: 8px; border-top: 1px solid #ccc; }
-            tbody, tr.signature-row { page-break-inside: avoid !important; }
-            tr.signature-row { page-break-after: always !important; }
-            tr.signature-row:last-of-type { page-break-after: auto !important; }
-            body.printing-cards .print-header { display: block !important; text-align: center; margin-bottom: 1cm; }
-            body.printing-cards .print-header .print-logo { display: none !important; }
-            body.printing-cards .tech-card { page-break-inside: avoid !important; border-width: 1px !important; border-color: #999 !important; margin-bottom: 0 !important; font-size: 9.5pt; -webkit-print-color-adjust: exact !important; color-adjust: exact !important; }
-            body.printing-cards .tech-card-header { padding: 0.25rem 0.5rem !important; }
-            body.printing-cards .tech-card-body { padding: 0.5rem !important; }
-            body.printing-cards .tech-card .table { margin-bottom: 0.5rem !important; }
-            body.printing-cards .tech-card .table th, body.printing-cards .tech-card .table td { padding: 3px !important; font-size: 9pt; }
-            body.printing-cards .tech-card h5 { font-size: 1.1em; margin-top: 0.5rem; margin-bottom: 0.5rem; }
-            body.printing-cards .tech-card-header p { margin: 0.1rem 0; font-size: 0.85em; }
-            body.printing-cards .tech-card-header, body.printing-cards .tech-card .table th, body.printing-cards .tech-card .table td, body.printing-cards .tech-card-header .header-col:nth-child(2) { border-color: #999 !important; }
-            body.printing-cards .tech-card-general-info .text-start { text-align: right !important; }
-            body.printing-cards .tech-card.unit-1 .tech-card-header, body.printing-cards .tech-card.unit-1 .stage-cell, body.printing-cards .tech-card.unit-1 .tech-card-general-info th { background-color: #eaf7ff !important; } body.printing-cards .tech-card.unit-2 .tech-card-header, body.printing-cards .tech-card.unit-2 .stage-cell, body.printing-cards .tech-card.unit-2 .tech-card-general-info th { background-color: #eafceb !important; } body.printing-cards .tech-card.unit-3 .tech-card-header, body.printing-cards .tech-card.unit-3 .stage-cell, body.printing-cards .tech-card.unit-3 .tech-card-general-info th { background-color: #fff8e8 !important; } body.printing-cards .tech-card.unit-4 .tech-card-header, body.printing-cards .tech-card.unit-4 .stage-cell, body.printing-cards .tech-card.unit-4 .tech-card-general-info th { background-color: #f3eaff !important; } body.printing-cards .tech-card.unit-5 .tech-card-header, body.printing-cards .tech-card.unit-5 .stage-cell, body.printing-cards .tech-card.unit-5 .tech-card-general-info th { background-color: #fff3e0 !important; } body.printing-cards .tech-card.unit-6 .tech-card-header, body.printing-cards .tech-card.unit-6 .stage-cell, body.printing-cards .tech-card.unit-6 .tech-card-general-info th { background-color: #fcecf4 !important; } body.printing-cards .tech-card.unit-7 .tech-card-header, body.printing-cards .tech-card.unit-7 .stage-cell, body.printing-cards .tech-card.unit-7 .tech-card-general-info th { background-color: #e7f9fc !important; } body.printing-cards .tech-card.unit-8 .tech-card-header, body.printing-cards .tech-card.unit-8 .stage-cell, body.printing-cards .tech-card.unit-8 .tech-card-general-info th { background-color: #f0ebff !important; } body.printing-cards .tech-card.unit-9 .tech-card-header, body.printing-cards .tech-card.unit-9 .stage-cell, body.printing-cards .tech-card.unit-9 .tech-card-general-info th { background-color: #fff3e0 !important; } body.printing-cards .tech-card.unit-10 .tech-card-header, body.printing-cards .tech-card.unit-10 .stage-cell, body.printing-cards .tech-card.unit-10 .tech-card-general-info th { background-color: #e9f9f4 !important; }
+            
+            body.printing-journal #journal-table .lesson-print-meta.unit-color-1 { background-color: #eaf7ff !important; } 
+            body.printing-journal #journal-table .lesson-print-meta.unit-color-2 { background-color: #eafceb !important; } 
+            body.printing-journal #journal-table .lesson-print-meta.unit-color-3 { background-color: #fff8e8 !important; } 
+            body.printing-journal #journal-table .lesson-print-meta.unit-color-4 { background-color: #f3eaff !important; } 
+            body.printing-journal #journal-table .lesson-print-meta.unit-color-5 { background-color: #fff3e0 !important; } 
+            body.printing-journal #journal-table .lesson-print-meta.unit-color-6 { background-color: #fcecf4 !important; } 
+            body.printing-journal #journal-table .lesson-print-meta.unit-color-7 { background-color: #e7f9fc !important; } 
+            body.printing-journal #journal-table .lesson-print-meta.unit-color-8 { background-color: #f0ebff !important; } 
+            body.printing-journal #journal-table .lesson-print-meta.unit-color-9 { background-color: #fff3e0 !important; } 
+            body.printing-journal #journal-table .lesson-print-meta.unit-color-10 { background-color: #e9f9f4 !important; }
+            
+            .print-signature-footer { 
+                display: flex !important; 
+                justify-content: space-between; 
+                font-weight: bold; 
+                font-size: 0.9em; 
+                padding-top: 8px; 
+                border-top: 1px solid #ccc; 
+            }
+            tr.journal-entry, tr.signature-row { 
+                page-break-inside: avoid !important; /* <<-- 4. تطبيق القاعدة على العنصر الصحيح */
+            }
+            tr.signature-row { 
+                page-break-after: always !important; 
+            }
+            tr.signature-row:last-of-type { 
+                page-break-after: auto !important; 
+            }
+            body.printing-cards .print-header { 
+                display: block !important; 
+                text-align: center; 
+                margin-bottom: 1cm; 
+            }
+            body.printing-cards .print-header .print-logo { 
+                display: none !important; 
+            }
+            body.printing-cards .tech-card { 
+                page-break-inside: avoid !important; 
+                border-width: 1px !important; 
+                border-color: #999 !important; 
+                margin-bottom: 0 !important; 
+                font-size: 9.5pt; 
+                -webkit-print-color-adjust: exact !important; 
+                color-adjust: exact !important; 
+            }
+            body.printing-cards .tech-card-header { 
+                padding: 0.25rem 0.5rem !important; 
+            }
+            body.printing-cards .tech-card-body { 
+                padding: 0.5rem !important; 
+            }
+            body.printing-cards .tech-card .table { 
+                margin-bottom: 0.5rem !important; 
+            }
+            body.printing-cards .tech-card .table th, body.printing-cards .tech-card .table td { 
+                padding: 3px !important; 
+                font-size: 9pt; 
+            }
+            body.printing-cards .tech-card h5 { 
+                font-size: 1.1em; 
+                margin-top: 0.5rem; 
+                margin-bottom: 0.5rem; 
+            }
+            body.printing-cards .tech-card-header p { 
+                margin: 0.1rem 0; 
+                font-size: 0.85em; 
+            }
+            body.printing-cards .tech-card-header, body.printing-cards .tech-card .table th, body.printing-cards .tech-card .table td, body.printing-cards .tech-card-header .header-col:nth-child(2) { 
+                border-color: #999 !important; 
+            }
+            body.printing-cards .tech-card-general-info .text-start { 
+                text-align: right !important; 
+            }
+            body.printing-cards .tech-card.unit-1 .tech-card-header, body.printing-cards .tech-card.unit-1 .stage-cell, body.printing-cards .tech-card.unit-1 .tech-card-general-info th { background-color: #eaf7ff !important; } 
+            body.printing-cards .tech-card.unit-2 .tech-card-header, body.printing-cards .tech-card.unit-2 .stage-cell, body.printing-cards .tech-card.unit-2 .tech-card-general-info th { background-color: #eafceb !important; } 
+            body.printing-cards .tech-card.unit-3 .tech-card-header, body.printing-cards .tech-card.unit-3 .stage-cell, body.printing-cards .tech-card.unit-3 .tech-card-general-info th { background-color: #fff8e8 !important; } 
+            body.printing-cards .tech-card.unit-4 .tech-card-header, body.printing-cards .tech-card.unit-4 .stage-cell, body.printing-cards .tech-card.unit-4 .tech-card-general-info th { background-color: #f3eaff !important; } 
+            body.printing-cards .tech-card.unit-5 .tech-card-header, body.printing-cards .tech-card.unit-5 .stage-cell, body.printing-cards .tech-card.unit-5 .tech-card-general-info th { background-color: #fff3e0 !important; } 
+            body.printing-cards .tech-card.unit-6 .tech-card-header, body.printing-cards .tech-card.unit-6 .stage-cell, body.printing-cards .tech-card.unit-6 .tech-card-general-info th { background-color: #fcecf4 !important; } 
+            body.printing-cards .tech-card.unit-7 .tech-card-header, body.printing-cards .tech-card.unit-7 .stage-cell, body.printing-cards .tech-card.unit-7 .tech-card-general-info th { background-color: #e7f9fc !important; } 
+            body.printing-cards .tech-card.unit-8 .tech-card-header, body.printing-cards .tech-card.unit-8 .stage-cell, body.printing-cards .tech-card.unit-8 .tech-card-general-info th { background-color: #f0ebff !important; } 
+            body.printing-cards .tech-card.unit-9 .tech-card-header, body.printing-cards .tech-card.unit-9 .stage-cell, body.printing-cards .tech-card.unit-9 .tech-card-general-info th { background-color: #fff3e0 !important; } 
+            body.printing-cards .tech-card.unit-10 .tech-card-header, body.printing-cards .tech-card.unit-10 .stage-cell, body.printing-cards .tech-card.unit-10 .tech-card-general-info th { background-color: #e9f9f4 !important; }
             /* === END: PROFESSIONAL PRINT STYLESHEET === */
         }
     </style>
+
+
+    
 </head>
 <body>
 
